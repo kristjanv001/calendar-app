@@ -3,10 +3,10 @@
     <!-- header -->
     <div class="flex items-center justify-between mb-8">
       <span class="font-bold">{{currMonthName()}} {{currYear()}}</span>
-      <div class="space-x-1 text-sm">
-        <button (click)="setPrevMonth()" class="bg-gray-300 rounded px-2 py-1">Prev</button>
-        <button class="bg-gray-200 rounded px-2 py-1">Today</button>
-        <button (click)="setNextMonth()" class="bg-gray-300 rounded px-2 py-1">Next</button>
+      <div class="space-x-1 text-xs text-white">
+        <button (click)="setPrevMonth()" class="bg-gray-900 rounded px-2 py-1">Prev</button>
+        <button (click)="setCurrMonth()" class="bg-gray-900 rounded px-2 py-1">Today</button>
+        <button (click)="setNextMonth()" class="bg-gray-900 rounded px-2 py-1">Next</button>
       </div>
     </div>
     <!-- grid -->
@@ -14,9 +14,9 @@
       @for (day of weekDays; track $index) {
       <span class="p-1">{{day}}</span>
       } @for (_ of [].constructor(getOffset(currDate())); track $index) {
-      <div class="min-h-10 min-w-10 text-xs p-1"></div>
+      <div class="square min-h-8 sm:h-auto text-xs p-1"></div>
       } @for (_ of [].constructor(currMonthDays()); let index = $index; track index) {
-      <div class="min-h-10 min-w-10 bg-gray-200 text-xs p-1">{{index+1}}</div>
+      <div class="square min-h-8 sm:h-auto bg-gray-100 text-xs p-1">{{index+1}}</div>
       }
     </div>
 

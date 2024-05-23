@@ -18,7 +18,6 @@ export class CalendarComponent {
   }
 
   getMonthDays(date: Date): number {
-    console.log("runs");
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   }
 
@@ -40,5 +39,9 @@ export class CalendarComponent {
     nextDate.setMonth(nextDate.getMonth() + 1);
 
     this.currDate.set(nextDate);
+  }
+
+  setCurrMonth() {
+    this.currDate.set(new Date());
   }
 }
