@@ -1,17 +1,25 @@
-import { Component, OnInit, WritableSignal, Signal, signal, computed } from "@angular/core";
+import { Component, WritableSignal, Signal, signal, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-calendar",
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: "./calendar.component.html",
 })
 export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  currDate: WritableSignal<Date> = signal(new Date());
-  currMonthDays = computed(() => this.getMonthDays(this.currDate()));
-  currMonthName = computed(() => this.getMonthName(this.currDate()));
-  currYear = computed(() => this.currDate().getFullYear());
+
+  currentDate = new Date();
+  currentDay = new Date().getDate();
+  currentMonth = new Date().getMonth();
+  currentYear = new Date().getFullYear();
+
+  selectedDate: WritableSignal<Date> = signal(new Date());
+  selectedMonth: Signal<number> = computed(() => this.selectedDate().getMonth());
+  selectedYear: Signal<number> = computed(() => this.selectedDate().getFullYear());
+  selectedMonthName: Signal<string> = computed(() => this.getMonthName(this.selectedDate()));
+  selectedMonthDays: Signal<number> = computed(() => this.getMonthDays(this.selectedDate()));
 
   getMonthName(date: Date) {
     return date.toLocaleString("default", { month: "long" });
@@ -28,20 +36,20 @@ export class CalendarComponent {
   }
 
   setPrevMonth() {
-    const prevDate = new Date(this.currDate());
+    const prevDate = new Date(this.selectedDate());
     prevDate.setMonth(prevDate.getMonth() - 1);
 
-    this.currDate.set(prevDate);
+    this.selectedDate.set(prevDate);
   }
 
   setNextMonth() {
-    const nextDate = new Date(this.currDate());
+    const nextDate = new Date(this.selectedDate());
     nextDate.setMonth(nextDate.getMonth() + 1);
 
-    this.currDate.set(nextDate);
+    this.selectedDate.set(nextDate);
   }
 
   setCurrMonth() {
-    this.currDate.set(new Date());
+    this.selectedDate.set(new Date());
   }
 }
