@@ -21,6 +21,9 @@ export class CalendarComponent {
   selectedMonthName: Signal<string> = computed(() => this.getMonthName(this.selectedDate()));
   selectedMonthDays: Signal<number> = computed(() => this.getMonthDays(this.selectedDate()));
 
+  pickedDate: WritableSignal<Date> = signal(new Date());
+  pickedDateStr: Signal<string> = computed(() => this.getDateStr(this.pickedDate()));
+
   getMonthName(date: Date) {
     return date.toLocaleString("default", { month: "long" });
   }
@@ -51,5 +54,25 @@ export class CalendarComponent {
 
   setCurrMonth() {
     this.selectedDate.set(new Date());
+  }
+
+  handleDateClick(day: number) {
+    const year = this.selectedYear();
+    const month = this.selectedMonth();
+    const clickedDate = new Date(year, month, day);
+
+    console.log(clickedDate);
+
+    this.pickedDate.set(clickedDate);
+  }
+
+  getDateStr(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
   }
 }
