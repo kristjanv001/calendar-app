@@ -1,5 +1,6 @@
 import { Component, WritableSignal, Signal, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Task } from "../../interfaces/task.interface";
 
 @Component({
   selector: "app-calendar",
@@ -9,6 +10,15 @@ import { CommonModule } from "@angular/common";
 })
 export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  tasks: WritableSignal<Task[]> = signal([
+    { date: "2024-05-12", title: "qsrgtrhtrhtr" },
+    { date: "2024-05-15", title: "cdgergerg" },
+    { date: "2024-05-15", title: "wefwefwe" },
+    { date: "2024-05-15", title: "wefsqwsq" },
+    { date: "2024-06-01", title: "dfwerfwfe" },
+    { date: "2024-06-02", title: "qwdwqqdw" },
+    { date: "2024-06-02", title: "geergherre" },
+  ]);
 
   currentDate = new Date();
   currentDay = new Date().getDate();
@@ -23,6 +33,7 @@ export class CalendarComponent {
 
   pickedDate: WritableSignal<Date> = signal(new Date());
   pickedDateStr: Signal<string> = computed(() => this.getDateStr(this.pickedDate()));
+  pickedDateTasks: Signal<Task[]> = computed(() => this.getDateTasks(this.pickedDate()));
 
   getMonthName(date: Date) {
     return date.toLocaleString("default", { month: "long" });
@@ -61,8 +72,6 @@ export class CalendarComponent {
     const month = this.selectedMonth();
     const clickedDate = new Date(year, month, day);
 
-    console.log(clickedDate);
-
     this.pickedDate.set(clickedDate);
   }
 
@@ -74,5 +83,19 @@ export class CalendarComponent {
       day: "numeric",
     };
     return date.toLocaleDateString("en-US", options);
+  }
+
+  getDateTasks(date: Date): Task[] {
+    const pickedDateIso = this.formatDateAsIso(date);
+
+    return this.tasks().filter((task) => task.date === pickedDateIso);
+  }
+
+  formatDateAsIso(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
   }
 }

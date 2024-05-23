@@ -24,7 +24,7 @@
         <button (click)="handleDateClick(index + 1)" class="square min-h-8 sm:h-auto bg-gray-100 text-sm relative">
           <div class="absolute top-1 right-1">
             <span
-              [ngClass]="{'bg-red-500 text-white rounded-full ': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
+              [ngClass]="{'bg-red-500 text-white rounded-full': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
             >
               {{ index + 1 }}
             </span>
@@ -40,6 +40,11 @@
     <!-- details -->
     <div class="min-h-20 bg-gray-300 mt-8 rounded-md p-4 text-md">
       <h2>Tasks for {{pickedDateStr()}}</h2>
+      <div>
+        @for(task of pickedDateTasks(); track task.date) {
+          <p>{{task.title}}</p>
+        }
+      </div>
     </div>
   </div>
 </div>
