@@ -1,18 +1,29 @@
 <div>
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-    <label>
-      Title
-      <input class="border" type="text" formControlName="title" />
-    </label>
+    <div class="mb-8">
+      <div class="mb-2">
+        <label>
+          <span class="block text-sm mb-1"> Title: </span>
+          <input class="border p-1 rounded-md" type="text" formControlName="title" />
+          @if(triedToSubmit) {
+          <span class="text-red-600 block text-xs">{{ getErrorMessage('title') }}</span>
+          }
+        </label>
+      </div>
 
-    <label>
-      Date
-      <input class="border" type="text" formControlName="date" />
-    </label>
-
-    <button class="bg-gray-200 rounded-md px-2 py-1 mr-2" mat-dialog-close>Cancel</button>
-    <button class="bg-gray-900 rounded-md px-2 py-1 text-white" cdkFocusInitial>
-      Create
-    </button>
+      <div>
+        <label>
+          <span class="block text-sm mb-1"> Date: </span>
+          <input class="border p-1 rounded-md" type="text" formControlName="date" />
+          @if(triedToSubmit) {
+          <span class="text-red-600 block text-xs">{{ getErrorMessage('date') }}</span>
+          }
+        </label>
+      </div>
+    </div>
+    <div>
+      <button class="bg-gray-200 rounded-md px-2 py-1 mr-2" (click)="onDialogClose()" mat-dialog-close>Cancel</button>
+      <button class="bg-gray-900 rounded-md px-2 py-1 text-white" cdkFocusInitial>Create</button>
+    </div>
   </form>
 </div>

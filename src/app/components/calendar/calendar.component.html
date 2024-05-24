@@ -24,7 +24,7 @@
         <button (click)="handleDateClick(index + 1)" class="square min-h-8 sm:h-auto bg-gray-100 relative">
           <div class="absolute top-1 right-1">
             <span
-              [ngClass]="{'bg-red-700 text-white rounded-full': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
+              [ngClass]="{'bg-fuchsia-600 text-white rounded-full': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
             >
               {{ index + 1 }}
             </span>
