@@ -15,6 +15,7 @@ export class CalendarComponent {
     { date: "2024-05-15", title: "cdgergerg" },
     { date: "2024-05-15", title: "wefwefwe" },
     { date: "2024-05-15", title: "wefsqwsq" },
+    { date: "2024-05-25", title: "lorem ipsum" },
     { date: "2024-06-01", title: "dfwerfwfe" },
     { date: "2024-06-02", title: "qwdwqqdw" },
     { date: "2024-06-02", title: "geergherre" },
@@ -34,6 +35,21 @@ export class CalendarComponent {
   pickedDate: WritableSignal<Date> = signal(new Date());
   pickedDateStr: Signal<string> = computed(() => this.getDateStr(this.pickedDate()));
   pickedDateTasks: Signal<Task[]> = computed(() => this.getDateTasks(this.pickedDate()));
+
+  taskCounts: Signal<number[]> = computed(() => {
+    const counts = new Array(this.selectedMonthDays()).fill(0);
+
+    this.tasks().forEach((task) => {
+      const taskDate = new Date(task.date);
+
+      if (taskDate.getFullYear() === this.selectedYear() && taskDate.getMonth() === this.selectedMonth()) {
+        const day = taskDate.getDate();
+        counts[day - 1]++;
+      }
+    });
+
+    return counts;
+  });
 
   getMonthName(date: Date) {
     return date.toLocaleString("default", { month: "long" });
@@ -86,9 +102,9 @@ export class CalendarComponent {
   }
 
   getDateTasks(date: Date): Task[] {
-    const pickedDateIso = this.formatDateAsIso(date);
+    const dateIso = this.formatDateAsIso(date);
 
-    return this.tasks().filter((task) => task.date === pickedDateIso);
+    return this.tasks().filter((task) => task.date === dateIso);
   }
 
   formatDateAsIso(date: Date): string {
