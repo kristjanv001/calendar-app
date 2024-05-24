@@ -1,0 +1,18 @@
+<div>
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <label>
+      Title
+      <input class="border" type="text" formControlName="title" />
+    </label>
+
+    <label>
+      Date
+      <input class="border" type="text" formControlName="date" />
+    </label>
+
+    <button class="bg-gray-200 rounded-md px-2 py-1 mr-2" mat-dialog-close>Cancel</button>
+    <button class="bg-gray-900 rounded-md px-2 py-1 text-white" cdkFocusInitial>
+      Create
+    </button>
+  </form>
+</div>

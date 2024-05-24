@@ -1,6 +1,9 @@
 import { Component, WritableSignal, Signal, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { MatDialog } from "@angular/material/dialog";
 import { Task } from "../../interfaces/task.interface";
+import { DialogComponent } from "../dialog/dialog.component";
+import { EventComposerComponent } from "../event-composer/event-composer.component";
 
 @Component({
   selector: "app-calendar",
@@ -50,6 +53,21 @@ export class CalendarComponent {
 
     return counts;
   });
+
+  constructor(public dialog: MatDialog) {}
+
+  openDialog() {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: {
+        title: "Create a New Event",
+        content: EventComposerComponent,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 
   getMonthName(date: Date) {
     return date.toLocaleString("default", { month: "long" });
