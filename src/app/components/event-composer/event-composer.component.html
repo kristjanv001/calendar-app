@@ -14,7 +14,7 @@
       <div>
         <label>
           <span class="block text-sm mb-1"> Date: </span>
-          <input class="border p-1 rounded-md" type="text" formControlName="date" />
+          <input formControlName="date" class="border p-1 rounded-md" type="date" [value]="data.payload.date" />
           @if(triedToSubmit) {
           <span class="text-red-600 block text-xs">{{ getErrorMessage('date') }}</span>
           }

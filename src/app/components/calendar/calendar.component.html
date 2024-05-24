@@ -1,13 +1,13 @@
 <div>
-  <div class="px-4 grid grid-rows-[max-content_1fr]">
-    <div>
-      <div class="flex items-center justify-between mb-8">
-        <p>
+  <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1200px] mx-auto grid-cols-1 md:grid-cols-3">
+    <div class="md:col-span-2">
+      <div class="flex items-center justify-between mb-8 md:place-items-start">
+        <p class="font-bold md:text-xl lg:text-4xl">
           <span class="font-bold">{{ selectedMonthName() }}</span>
-          <span class="text-lg"> {{ selectedYear() }}</span>
+          <span class="font-thin"> {{ selectedYear() }}</span>
         </p>
 
-        <div class="space-x-1  text-white">
+        <div class="space-x-1 text-white">
           <button (click)="setPrevMonth()" class="bg-gray-900 rounded-md px-2 py-1">Prev</button>
           <button (click)="setCurrMonth()" class="bg-gray-900 rounded-md px-2 py-1">Today</button>
           <button (click)="setNextMonth()" class="bg-gray-900 rounded-md px-2 py-1">Next</button>
@@ -21,10 +21,11 @@
         } @for (_ of [].constructor(getOffset(selectedDate())); track $index) {
         <div class="square min-h-8 sm:h-auto p-1"></div>
         } @for (_ of [].constructor(selectedMonthDays()); let index = $index; track index) {
-        <button (click)="handleDateClick(index + 1)" class="square min-h-8 sm:h-auto bg-gray-100 relative">
+        <button (click)="handleDateClick(index + 1)" class="square min-h-8 sm:h-auto bg-gray-100 relative border">
           <div class="absolute top-1 right-1">
             <span
-              [ngClass]="{'bg-fuchsia-600 text-white rounded-full': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
+              class="bg-gray-100 rounded-md p-0.5"
+              [ngClass]="{'bg-fuchsia-600 text-white': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
             >
               {{ index + 1 }}
             </span>
@@ -44,10 +45,10 @@
     </div>
 
     <!-- details -->
-    <div class="min-h-20 bg-gray-100 mt-8 rounded-md p-4 ">
-      <div class="flex justify-between items-center">
-        <h2>Tasks for {{pickedDateStr()}}</h2>
-        <button (click)="openDialog()" class="bg-gray-900 rounded-md px-2 py-1 text-white">New Event</button>
+    <div class="min-h-20 mt-8 rounded-md p-4 md:mt-0 md:mx-4 md:pt-0">
+      <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:mb-8">
+        <h2 class="font-bold md:text-xl lg:text-3xl">{{pickedDateStr()}}</h2>
+        <button (click)="openDialog()" class="bg-gray-900 rounded-md px-2 py-1 text-white md:mb-14">New Event</button>
       </div>
       <div class="">
         @for(task of pickedDateTasks(); track task.date) {

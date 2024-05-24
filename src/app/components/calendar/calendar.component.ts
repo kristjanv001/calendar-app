@@ -62,14 +62,16 @@ export class CalendarComponent {
         title: "Create a New Event",
         component: EventComposerComponent,
         payload: {
-          date: this.pickedDate()
-        }
+          date: this.formatDateAsIso(this.pickedDate()),
+        },
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
-      this.tasks.update((prevTasks) => [...prevTasks, {title: result.title, date: this.formatDateAsIso(result.date)}])
+      console.log("result: ", result);
+      if (result) {
+        this.tasks.update((prevTasks) => [...prevTasks, { title: result.title, date: result.date }]);
+      }
     });
   }
 
