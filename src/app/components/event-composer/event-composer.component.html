@@ -4,7 +4,7 @@
       <div class="mb-2">
         <label>
           <span class="block text-sm mb-1"> Title: </span>
-          <input class="border p-1 rounded-md" type="text" formControlName="title" />
+          <input class="border p-1 rounded-md md:w-96" type="text" formControlName="title" />
           @if(triedToSubmit) {
           <span class="text-red-600 block text-xs">{{ getErrorMessage('title') }}</span>
           }
@@ -14,7 +14,7 @@
       <div>
         <label>
           <span class="block text-sm mb-1"> Date: </span>
-          <input formControlName="date" class="border p-1 rounded-md" type="date" [value]="data.payload.date" />
+          <input formControlName="date" class="md:w-96 border p-1 rounded-md" type="date" [value]="data.payload.date" />
           @if(triedToSubmit) {
           <span class="text-red-600 block text-xs">{{ getErrorMessage('date') }}</span>
           }

@@ -1,9 +1,9 @@
 <div>
-  <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1200px] mx-auto grid-cols-1 md:grid-cols-3">
-    <div class="md:col-span-2">
-      <div class="flex items-center justify-between mb-8 md:place-items-start">
-        <p class="font-bold md:text-xl lg:text-4xl">
-          <span class="font-bold">{{ selectedMonthName() }}</span>
+  <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1200px] mx-auto grid-cols-1 md:grid-cols-3 ">
+
+      <div class="flex items-center justify-between mb-8 md:mb-0 md:place-items-start md:col-span-2 h-24">
+        <p class="font-bold md:text-xl lg:text-4xl md:-mt-2">
+          <span class="font-bold ">{{ selectedMonthName() }}</span>
           <span class="font-thin"> {{ selectedYear() }}</span>
         </p>
 
@@ -15,7 +15,7 @@
       </div>
 
       <!-- grid -->
-      <div class="grid grid-cols-7 gap-1">
+      <div class="grid grid-cols-7 gap-1 md:row-start-2 md:col-span-2">
         @for (day of weekDays; track $index) {
         <span class="">{{ day }}</span>
         } @for (_ of [].constructor(getOffset(selectedDate())); track $index) {
@@ -42,13 +42,16 @@
 
         }
       </div>
-    </div>
+
 
     <!-- details -->
-    <div class="min-h-20 mt-8 rounded-md p-4 md:mt-0 md:mx-4 md:pt-0">
-      <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:mb-8">
+    <div class="md:items-start md:mx-4 lg:mx-8">
+      <button (click)="openDialog()" class="mt-4 md:mt-0 bg-gray-900 rounded-md px-2 py-1 text-white ">New Event</button>
+    </div>
+
+    <div class="min-h-20 mt-8 rounded-md md:mt-0 md:mx-4 lg:mx-8 md:pt-0 md:col-start-3 ">
+      <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-8">
         <h2 class="font-bold md:text-xl lg:text-3xl">{{pickedDateStr()}}</h2>
-        <button (click)="openDialog()" class="bg-gray-900 rounded-md px-2 py-1 text-white md:mb-14">New Event</button>
       </div>
       <div class="">
         @for(task of pickedDateTasks(); track task.date) {
