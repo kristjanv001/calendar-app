@@ -4,7 +4,7 @@ import { MatDialogModule, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 interface DialogData {
   title: string;
-  content: any
+  component: any;
 }
 
 @Component({

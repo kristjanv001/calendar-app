@@ -60,12 +60,16 @@ export class CalendarComponent {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: "Create a New Event",
-        content: EventComposerComponent,
+        component: EventComposerComponent,
+        payload: {
+          date: this.pickedDate()
+        }
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result?.date}`);
+      console.log(result);
+      this.tasks.update((prevTasks) => [...prevTasks, {title: result.title, date: this.formatDateAsIso(result.date)}])
     });
   }
 

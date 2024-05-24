@@ -1,8 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { MatDialogModule } from "@angular/material/dialog";
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
-
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 @Component({
   selector: "app-event-composer",
   standalone: true,
@@ -12,7 +12,10 @@ import { MatDialogRef } from "@angular/material/dialog";
 export class EventComposerComponent {
   triedToSubmit = false;
 
-  constructor(private dialogRef: MatDialogRef<EventComposerComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<EventComposerComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {}
 
   eventForm = new FormGroup({
     title: new FormControl("", [Validators.required, Validators.minLength(1), Validators.maxLength(50)]),
@@ -21,9 +24,10 @@ export class EventComposerComponent {
 
   onSubmit() {
     if (this.eventForm.valid) {
-      this.eventForm.value.date = "lol";
+      this.eventForm.value.date = this.data.payload.date;
       this.dialogRef.close(this.eventForm.value);
     } else {
+      console.log(this.data.payload)
       this.validateForm();
       console.log("Form is invalid");
     }
