@@ -15,14 +15,15 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList }
 export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  tasks: Map<string, Task[]> = new Map<string, Task[]>([
+  tasks: WritableSignal<Map<string, Task[]>> = signal(new Map<string, Task[]>([
     ["2024-05-01", [{ title: "Task 1" }]],
     ["2024-05-05", [{ title: "Task 2" }, { title: "Task 3" }]],
     ["2024-05-10", [{ title: "Task 4" }]],
     ["2024-05-15", [{ title: "Task 5" }, { title: "Task 6" }, { title: "Task 7" }]],
     ["2024-05-20", [{ title: "Task 8" }]],
     ["2024-05-25", [{ title: "Task 9" }, { title: "Task 10" }]],
-  ]);
+  ]));
+
 
   selectedDate: WritableSignal<Date> = signal(new Date());
   selectedYear: Signal<number> = computed(() => this.getYear(this.selectedDate()));
@@ -40,7 +41,7 @@ export class CalendarComponent {
   constructor(public dialog: MatDialog) {}
 
   getTasks(date: Date): Task[] {
-    return this.tasks.get(this.formatDateAsIso(date)) || [];
+    return this.tasks().get(this.formatDateAsIso(date)) || [];
   }
 
   isSameDate(dateA: Date, dateB: Date) {
@@ -91,24 +92,13 @@ export class CalendarComponent {
       },
     });
 
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
-    //     const newTask: Task = { title: result.title };
-    //     const taskDate = new Date(result.date).getDate();
-
-    //     this.selectedMonthDays.update((weekDays) =>
-    //       weekDays.map((weekDay) => {
-    //         if (weekDay.dayNum === taskDate) {
-    //           return {
-    //             ...weekDay,
-    //             tasks: [...weekDay.tasks, newTask],
-    //           };
-    //         }
-    //         return weekDay;
-    //       }),
-    //     );
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log(result)
+        const existingTasks = this.tasks().get(result.date) || [];
+        this.tasks.update((prevTasks) => prevTasks.set(result.date, [...existingTasks, { title: result.title }]))
+      }
+    });
   }
 
   getMonthStr(date: Date) {
