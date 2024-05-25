@@ -2,7 +2,7 @@
   <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1200px] mx-auto grid-cols-1 lg:grid-cols-3">
     <div class="flex items-center justify-between mb-8 lg:mb-0 lg:place-items-start lg:col-span-2 lg:h-24">
       <p class="font-bold md:text-xl lg:text-4xl md:-mt-2">
-        <span class="font-bold">{{ selectedMonthName() }}</span>
+        <span class="font-bold">{{ selectedMonthStr() }}</span>
         <span class="font-thin"> {{ selectedYear() }}</span>
       </p>
 
@@ -19,39 +19,40 @@
       <span class="">{{ day }}</span>
       } @for (_ of [].constructor(getOffset(selectedDate())); track $index) {
       <div class="square min-h-8 sm:h-auto p-1"></div>
-      } @for (_ of [].constructor(selectedMonthDays()); let index = $index; track index) {
+      }
+
+      @for (day of selectedMonthDates(); track $index) {
       <button
-        (click)="handleDateClick(index + 1)"
+        (click)="handleDateClick(day.date)"
         class="square min-h-8 sm:h-auto bg-gray-100 relative border p-1 flex flex-col"
+        [ngClass]="{'border-gray-400': isSameDate(day.date, pickedDate())}"
       >
         <!-- header -->
         <div class="w-full flex justify-end">
           <div
-            class="bg-gray-100 rounded-md md:px-1 "
-            [ngClass]="{'bg-fuchsia-600 text-white': index+1 === currentDay && selectedMonth() === currentMonth && selectedYear() === currentYear }"
+            class="bg-gray-100 rounded-md md:px-1"
+            [ngClass]="{'bg-pink-600 text-white': isSameDate(day.date, currentDate())}"
           >
-            {{ index + 1 }}
+            {{ $index + 1 }}
           </div>
         </div>
-        <div class="items-start h-full flex-col text-xs hidden sm:flex">
 
-          @if (taskList()[index].length > 0) {
-            @for(task of taskList()[index]; track task.date) {
-              <p>{{task.title}}</p>
+        <div class="h-full flex-col">
+          @if (tasks.has(formatDateAsIso(day.date))) {
+
+            @for(task of tasks.get(formatDateAsIso(day.date)); track $index) {
+              <div class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs pl-1">{{task.title}}</div>
             }
-          }
 
-        </div>
-
-        @if (taskList()[index].length > 0) {
           <div
-            class="h-4 w-4 md:h-5 md:w-5 bg-blue-700 absolute -top-1 -left-1 md:-top-2 md:-left-2 rounded-full flex justify-center place-items-center text-white"
+            class="h-4 w-4 md:h-5 md:w-5 bg-blue-700 absolute -top-1 -left-1 md:-top-2 md:-left-2 rounded-full flex justify-center place-items-center text-white sm:hidden"
           >
-            <span> {{ taskList()[index].length }} </span>
+            <span> {{ tasks.get(formatDateAsIso(day.date))?.length }} </span>
           </div>
-        }
-      </button>
 
+          }
+        </div>
+      </button>
       }
     </div>
 
@@ -65,7 +66,7 @@
         <h2 class="font-bold md:text-xl lg:text-3xl">{{pickedDateStr()}}</h2>
       </div>
       <div class="">
-        @for(task of pickedDateTasks(); track task.date) {
+        @for(task of pickedDateTasks(); track $index) {
         <p>{{task.title}}</p>
         }
       </div>

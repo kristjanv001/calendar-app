@@ -1,51 +1,84 @@
 import { Component, WritableSignal, Signal, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
-import { Task } from "../../interfaces/task.interface";
+import { Task, WeekDayData, WeekDay } from "../../interfaces/calendar.interface";
 import { DialogComponent } from "../dialog/dialog.component";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
+import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "app-calendar",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CdkDropList, CdkDrag],
   templateUrl: "./calendar.component.html",
 })
 export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  tasks: WritableSignal<Task[]> = signal([]);
 
-  currentDate = new Date();
-  currentDay = new Date().getDate();
-  currentMonth = new Date().getMonth();
-  currentYear = new Date().getFullYear();
+  tasks: Map<string, Task[]> = new Map<string, Task[]>([
+    ["2024-05-01", [{ title: "Task 1" }]],
+    ["2024-05-05", [{ title: "Task 2" }, { title: "Task 3" }]],
+    ["2024-05-10", [{ title: "Task 4" }]],
+    ["2024-05-15", [{ title: "Task 5" }, { title: "Task 6" }, { title: "Task 7" }]],
+    ["2024-05-20", [{ title: "Task 8" }]],
+    ["2024-05-25", [{ title: "Task 9" }, { title: "Task 10" }]],
+  ]);
 
   selectedDate: WritableSignal<Date> = signal(new Date());
-  selectedMonth: Signal<number> = computed(() => this.selectedDate().getMonth());
-  selectedYear: Signal<number> = computed(() => this.selectedDate().getFullYear());
-  selectedMonthName: Signal<string> = computed(() => this.getMonthName(this.selectedDate()));
-  selectedMonthDays: Signal<number> = computed(() => this.getMonthDays(this.selectedDate()));
+  selectedYear: Signal<number> = computed(() => this.getYear(this.selectedDate()));
+  selectedMonth: Signal<number> = computed(() => this.getMonth(this.selectedDate()));
+  selectedMonthStr: Signal<string> = computed(() => this.getMonthStr(this.selectedDate()));
+  selectedMonthDates: Signal<WeekDay[]> = computed(() => this.getMonthDays(this.selectedDate()));
 
-  pickedDate: WritableSignal<Date> = signal(new Date());
+  currentDate = signal(new Date());
+  currentDay: Signal<number> = computed(() => this.getDay(this.currentDate()));
+
+  pickedDate: WritableSignal<Date> = signal(this.currentDate());
+  pickedDateTasks: Signal<Task[]> = computed(() => this.getTasks(this.pickedDate()));
   pickedDateStr: Signal<string> = computed(() => this.getDateStr(this.pickedDate()));
-  pickedDateTasks: Signal<Task[]> = computed(() => this.getDateTasks(this.pickedDate()));
-
-  taskList: Signal<Task[][]> = computed(() => {
-    const tasksPerDay: Task[][] = new Array(this.selectedMonthDays()).fill(0).map(() => []);
-
-    this.tasks().forEach((task) => {
-      const taskDate = new Date(task.date);
-
-      if (taskDate.getFullYear() === this.selectedYear() && taskDate.getMonth() === this.selectedMonth()) {
-        const day = taskDate.getDate();
-        tasksPerDay[day - 1].push(task);
-      }
-    });
-
-    return tasksPerDay;
-  });
 
   constructor(public dialog: MatDialog) {}
+
+  getTasks(date: Date): Task[] {
+    return this.tasks.get(this.formatDateAsIso(date)) || [];
+  }
+
+  isSameDate(dateA: Date, dateB: Date) {
+    return (
+      dateA.getFullYear() === dateB.getFullYear() &&
+      dateA.getMonth() === dateB.getMonth() &&
+      dateA.getDate() === dateB.getDate()
+    );
+  }
+
+  getDay(date: Date) {
+    return date.getDate();
+  }
+
+  getMonth(date: Date): number {
+    return date.getMonth();
+  }
+
+  getYear(date: Date): number {
+    return date.getFullYear();
+  }
+
+  drop(event: CdkDragDrop<any>) {
+    console.log("event: ", event);
+
+    if (event.previousContainer.id === event.container.id) {
+      console.log("❌ SAME CONTAINER");
+    } else {
+      console.log("✅ DIFFERENT CONTAINER");
+    }
+
+    if (event.previousContainer === event.container) {
+      console.log(event.container.data);
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
+  }
 
   openDialog() {
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -58,20 +91,43 @@ export class CalendarComponent {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log("result: ", result);
-      if (result) {
-        this.tasks.update((prevTasks) => [...prevTasks, { title: result.title, date: result.date }]);
-      }
-    });
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   if (result) {
+    //     const newTask: Task = { title: result.title };
+    //     const taskDate = new Date(result.date).getDate();
+
+    //     this.selectedMonthDays.update((weekDays) =>
+    //       weekDays.map((weekDay) => {
+    //         if (weekDay.dayNum === taskDate) {
+    //           return {
+    //             ...weekDay,
+    //             tasks: [...weekDay.tasks, newTask],
+    //           };
+    //         }
+    //         return weekDay;
+    //       }),
+    //     );
+    //   }
+    // });
   }
 
-  getMonthName(date: Date) {
+  getMonthStr(date: Date) {
     return date.toLocaleString("default", { month: "long" });
   }
 
-  getMonthDays(date: Date): number {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  getMonthDays(date: Date): WeekDay[] {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const days: WeekDay[] = new Array(daysInMonth).fill(null).map((_, index) => {
+      const dayDate = new Date(year, month, index + 1);
+      // const day = index + 1;
+
+      return { date: dayDate };
+    });
+
+    return days;
   }
 
   getOffset(date: Date) {
@@ -83,14 +139,12 @@ export class CalendarComponent {
   setPrevMonth() {
     const prevDate = new Date(this.selectedDate());
     prevDate.setMonth(prevDate.getMonth() - 1);
-
     this.selectedDate.set(prevDate);
   }
 
   setNextMonth() {
     const nextDate = new Date(this.selectedDate());
     nextDate.setMonth(nextDate.getMonth() + 1);
-
     this.selectedDate.set(nextDate);
   }
 
@@ -98,12 +152,8 @@ export class CalendarComponent {
     this.selectedDate.set(new Date());
   }
 
-  handleDateClick(day: number) {
-    const year = this.selectedYear();
-    const month = this.selectedMonth();
-    const clickedDate = new Date(year, month, day);
-
-    this.pickedDate.set(clickedDate);
+  handleDateClick(date: Date) {
+    this.pickedDate.set(date);
   }
 
   getDateStr(date: Date): string {
@@ -114,12 +164,6 @@ export class CalendarComponent {
       day: "numeric",
     };
     return date.toLocaleDateString("en-US", options);
-  }
-
-  getDateTasks(date: Date): Task[] {
-    const dateIso = this.formatDateAsIso(date);
-
-    return this.tasks().filter((task) => task.date === dateIso);
   }
 
   formatDateAsIso(date: Date): string {
