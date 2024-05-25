@@ -15,15 +15,14 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList }
 export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  tasks: WritableSignal<Map<string, Task[]>> = signal(new Map<string, Task[]>([
-    ["2024-05-01", [{ title: "Task 1" }]],
-    ["2024-05-05", [{ title: "Task 2" }, { title: "Task 3" }]],
-    ["2024-05-10", [{ title: "Task 4" }]],
-    ["2024-05-15", [{ title: "Task 5" }, { title: "Task 6" }, { title: "Task 7" }]],
-    ["2024-05-20", [{ title: "Task 8" }]],
-    ["2024-05-25", [{ title: "Task 9" }, { title: "Task 10" }]],
-  ]));
-
+  weekDayData: WeekDayData[] = [
+    { day: "2024-05-01", title: "Task 1" },
+    { day: "2024-05-01", title: "Task 2" },
+    { day: "2024-05-05", title: "Task 3" },
+    { day: "2024-05-05", title: "Task 4" },
+    { day: "2024-05-05", title: "Task 5" },
+    { day: "2024-05-25", title: "Task 6" },
+  ];
 
   selectedDate: WritableSignal<Date> = signal(new Date());
   selectedYear: Signal<number> = computed(() => this.getYear(this.selectedDate()));
@@ -35,13 +34,30 @@ export class CalendarComponent {
   currentDay: Signal<number> = computed(() => this.getDay(this.currentDate()));
 
   pickedDate: WritableSignal<Date> = signal(this.currentDate());
-  pickedDateTasks: Signal<Task[]> = computed(() => this.getTasks(this.pickedDate()));
+  pickedDateTasks: Signal<Task[]> = computed(() => this.getTasksForDay(this.pickedDate()));
   pickedDateStr: Signal<string> = computed(() => this.getDateStr(this.pickedDate()));
 
   constructor(public dialog: MatDialog) {}
 
-  getTasks(date: Date): Task[] {
-    return this.tasks().get(this.formatDateAsIso(date)) || [];
+  drop(event: CdkDragDrop<any>) {
+    console.log("event: ", event);
+
+    if (event.previousContainer.id === event.container.id) {
+      console.log("❌ SAME CONTAINER");
+    } else {
+      console.log("✅ DIFFERENT CONTAINER");
+    }
+
+    if (event.previousContainer === event.container) {
+      console.log(event.container.data);
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
+  }
+
+  getTasksForDay(date: Date): Task[] {
+    return this.weekDayData.filter((task) => task.day === this.formatDateAsIso(date));
   }
 
   isSameDate(dateA: Date, dateB: Date) {
@@ -64,23 +80,6 @@ export class CalendarComponent {
     return date.getFullYear();
   }
 
-  drop(event: CdkDragDrop<any>) {
-    console.log("event: ", event);
-
-    if (event.previousContainer.id === event.container.id) {
-      console.log("❌ SAME CONTAINER");
-    } else {
-      console.log("✅ DIFFERENT CONTAINER");
-    }
-
-    if (event.previousContainer === event.container) {
-      console.log(event.container.data);
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-    }
-  }
-
   openDialog() {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
@@ -94,9 +93,7 @@ export class CalendarComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log(result)
-        const existingTasks = this.tasks().get(result.date) || [];
-        this.tasks.update((prevTasks) => prevTasks.set(result.date, [...existingTasks, { title: result.title }]))
+        this.weekDayData.push({ day: result.date, title: result.title });
       }
     });
   }

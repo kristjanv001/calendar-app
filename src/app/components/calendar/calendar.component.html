@@ -19,9 +19,7 @@
       <span class="">{{ day }}</span>
       } @for (_ of [].constructor(getOffset(selectedDate())); track $index) {
       <div class="square min-h-8 sm:h-auto p-1"></div>
-      }
-
-      @for (day of selectedMonthDates(); track $index) {
+      } @for (day of selectedMonthDates(); track $index) {
       <button
         (click)="handleDateClick(day.date)"
         class="square min-h-8 sm:h-auto bg-gray-100 relative border p-1 flex flex-col"
@@ -38,16 +36,16 @@
         </div>
 
         <div class="h-full flex-col">
-          @if (tasks().has(formatDateAsIso(day.date))) {
-
-            @for(task of tasks().get(formatDateAsIso(day.date)); track $index) {
-              <div class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs pl-1">{{task.title}}</div>
-            }
+          @if (getTasksForDay(day.date).length > 0) { @for (task of getTasksForDay(day.date); track $index) {
+          <div class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs pl-1" cdkDrag>
+            {{task.title}}
+          </div>
+          }
 
           <div
             class="h-4 w-4 md:h-5 md:w-5 bg-blue-700 absolute -top-1 -left-1 md:-top-2 md:-left-2 rounded-full flex justify-center place-items-center text-white sm:hidden"
           >
-            <span> {{ tasks().get(formatDateAsIso(day.date))?.length }} </span>
+            <span> {{ getTasksForDay(day.date)?.length }} </span>
           </div>
 
           }
@@ -58,7 +56,12 @@
 
     <!-- details -->
     <div class="lg:items-start lg:mx-8 md:ml-1">
-      <button (click)="openDialog()" class="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-md px-2 py-1 text-white">New Event</button>
+      <button
+        (click)="openDialog()"
+        class="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-md px-2 py-1 text-white"
+      >
+        New Event
+      </button>
     </div>
 
     <div class="mt-4 rounded-md lg:mt-0 lg:mx-8 md:pt-0 lg:col-start-3 lg:row-start-2">
@@ -66,10 +69,8 @@
         <h2 class="font-bold md:text-xl lg:text-3xl">{{pickedDateStr()}}</h2>
       </div>
       <div class="">
-
-
-        @for(task of tasks().get(formatDateAsIso(pickedDate())); track $index) {
-          <div class="font-thin">{{task.title}}</div>
+        @for (task of getTasksForDay(pickedDate()); track $index) {
+        <div class="font-thin">{{task.title}}</div>
         }
       </div>
     </div>

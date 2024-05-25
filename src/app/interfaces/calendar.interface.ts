@@ -7,5 +7,5 @@ export interface Task {
 }
 
 export interface WeekDayData {
-  [date: string]: Task[];
+  day: string, title: string
 }
