@@ -13,16 +13,7 @@ import { EventComposerComponent } from "../event-composer/event-composer.compone
 })
 export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  tasks: WritableSignal<Task[]> = signal([
-    { date: "2024-05-12", title: "qsrgtrhtrhtr" },
-    { date: "2024-05-15", title: "cdgergerg" },
-    { date: "2024-05-15", title: "wefwefwe" },
-    { date: "2024-05-15", title: "wefsqwsq" },
-    { date: "2024-05-25", title: "lorem ipsum" },
-    { date: "2024-06-01", title: "dfwerfwfe" },
-    { date: "2024-06-02", title: "qwdwqqdw" },
-    { date: "2024-06-02", title: "geergherre" },
-  ]);
+  tasks: WritableSignal<Task[]> = signal([]);
 
   currentDate = new Date();
   currentDay = new Date().getDate();
@@ -39,19 +30,19 @@ export class CalendarComponent {
   pickedDateStr: Signal<string> = computed(() => this.getDateStr(this.pickedDate()));
   pickedDateTasks: Signal<Task[]> = computed(() => this.getDateTasks(this.pickedDate()));
 
-  taskCounts: Signal<number[]> = computed(() => {
-    const counts = new Array(this.selectedMonthDays()).fill(0);
+  taskList: Signal<Task[][]> = computed(() => {
+    const tasksPerDay: Task[][] = new Array(this.selectedMonthDays()).fill(0).map(() => []);
 
     this.tasks().forEach((task) => {
       const taskDate = new Date(task.date);
 
       if (taskDate.getFullYear() === this.selectedYear() && taskDate.getMonth() === this.selectedMonth()) {
         const day = taskDate.getDate();
-        counts[day - 1]++;
+        tasksPerDay[day - 1].push(task);
       }
     });
 
-    return counts;
+    return tasksPerDay;
   });
 
   constructor(public dialog: MatDialog) {}
