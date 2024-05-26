@@ -1,11 +1,15 @@
-export interface WeekDay {
-  date: Date;
-}
-
-export interface Task {
+export interface Event {
+  date: Date
   title: string;
 }
 
-export interface WeekDayData {
-  day: string, title: string
+export interface CalendarDay {
+  date: Date;
+  day: number;
+  events: Event[];
+}
+
+export interface CalendarMonth {
+  date: Date;
+  days: CalendarDay[];
 }
