@@ -20,14 +20,11 @@ export class CalendarComponent {
   selectedMonthStr$ = this.selectedMonth$.pipe(map((date) => this.getMonthStr(date)));
   selectedMonthOffset$ = this.selectedMonth$.pipe(map((date) => this.getOffset(date)));
   calendarMonth$ = this.selectedMonth$.pipe(map((date) => this.createCalendarMonth(date)));
+  selectedMonthEvents$ = this.calendarService.events2$;
 
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   constructor(public dialog: MatDialog) {}
-
-  ngOnInit() {
-    // this.createCalendarMonth(this.selectedMonth$.getValue());
-  }
 
   setSelectedMonth(date: Date) {
     this.calendarService.setSelectedMonth(date);
@@ -42,33 +39,28 @@ export class CalendarComponent {
     };
 
     for (let i = 1; i <= daysInSelectedMonth; i++) {
+      const currentDay = new Date(date.getFullYear(), date.getMonth(), i);
+      const events = this.selectedMonthEvents$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
+
       const calendarDay: CalendarDay = {
-        date: new Date(date.getFullYear(), date.getMonth(), i),
+        date: currentDay,
         day: i,
-        events: [], //call service
+        events: events,
       };
 
       calendarMonth.days.push(calendarDay);
     }
-
+    // console.log(calendarMonth);
     return calendarMonth;
   }
 
-  drop(event: CdkDragDrop<any>) {
-    console.log(
-      "container data: ",
-      event.container.data,
-      "prevIndex: ",
-      event.previousIndex,
-      "currIndex: ",
-      event.currentIndex,
-    );
+  getConnectedDropLists(index: number) {
+    return `cdk-drop-list-${index}`;
+  }
 
-    if (event.previousContainer === event.container) {
-      console.log("❌ SAME CONTAINER");
-    } else {
-      console.log("✅ DIFFERENT CONTAINER");
-    }
+  drop(event: CdkDragDrop<any>) {
+    console.log(event.container.id)
+
 
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
