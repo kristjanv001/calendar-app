@@ -2,7 +2,14 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { map } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
-import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList } from "@angular/cdk/drag-drop";
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+  copyArrayItem,
+  CdkDrag,
+  CdkDropList,
+} from "@angular/cdk/drag-drop";
 import { CalendarDay, CalendarMonth } from "../../interfaces/calendar.interface";
 import { DialogComponent } from "../dialog/dialog.component";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
@@ -15,16 +22,36 @@ import { CalendarService } from "../../services/calendar.service";
   templateUrl: "./calendar.component.html",
 })
 export class CalendarComponent {
+  weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   calendarService = inject(CalendarService);
+
+  currentDate = new Date()
+
   selectedMonth$ = this.calendarService.selectedMonth$;
   selectedMonthStr$ = this.selectedMonth$.pipe(map((date) => this.getMonthStr(date)));
   selectedMonthOffset$ = this.selectedMonth$.pipe(map((date) => this.getOffset(date)));
   calendarMonth$ = this.selectedMonth$.pipe(map((date) => this.createCalendarMonth(date)));
-  selectedMonthEvents$ = this.calendarService.events2$;
 
-  weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  events$ = this.calendarService.events$;
+
+  pickedDay$ = this.calendarService.pickedDay$;
+  pickedDayEvents$ = this.pickedDay$.pipe(map((date) => this.getDayEvents(date)));
+
+  // calMonthDays$ = this.selectedMonth$.pipe(map((date) => this.getDaysInMonth(date)));
+  // {{selectedMonthEvents$.getValue()[formatDateAsIso(pickedDay$.getValue())]}}
+  // this.selectedMonthEvents$.getValue()[this.formatDateAsIso(currentDay)] ?? []
 
   constructor(public dialog: MatDialog) {}
+
+  getDayEvents(date: Date) {
+    return this.events$.getValue()[this.formatDateAsIso(date)];
+  }
+
+  getConnectedDropLists(daysInMonth: number): any[] {
+    const arr = Array.from({ length: daysInMonth }, (_, index) => `acdk-drop-list-${index}`);
+
+    return arr;
+  }
 
   setSelectedMonth(date: Date) {
     this.calendarService.setSelectedMonth(date);
@@ -40,7 +67,7 @@ export class CalendarComponent {
 
     for (let i = 1; i <= daysInSelectedMonth; i++) {
       const currentDay = new Date(date.getFullYear(), date.getMonth(), i);
-      const events = this.selectedMonthEvents$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
+      const events = this.events$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
 
       const calendarDay: CalendarDay = {
         date: currentDay,
@@ -54,17 +81,15 @@ export class CalendarComponent {
     return calendarMonth;
   }
 
-  getConnectedDropLists(index: number) {
-    return `cdk-drop-list-${index}`;
-  }
-
   drop(event: CdkDragDrop<any>) {
-    console.log(event.container.id)
-
+    console.log(event.container.data);
 
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      return
     } else {
+      console.log("✅ different container");
+
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
   }
@@ -103,6 +128,7 @@ export class CalendarComponent {
 
   setCurrMonth() {
     this.calendarService.setSelectedMonth(new Date());
+    this.calendarService.setPickedDay(new Date());
   }
 
   setNextMonth() {
@@ -112,7 +138,9 @@ export class CalendarComponent {
     this.calendarService.setSelectedMonth(nextDate);
   }
 
-  handleDateClick(date: Date) {}
+  handleDayClick(date: Date) {
+    this.calendarService.setPickedDay(date);
+  }
 
   getDateStr(date: Date): string {
     const options: Intl.DateTimeFormatOptions = {

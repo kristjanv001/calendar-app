@@ -24,24 +24,34 @@
 
       <button
         *ngFor="let calDay of (calendarMonth$ | async)?.days; let i = index"
+        (click)="handleDayClick(calDay.date)"
+        cdkDropListGroup
         class="square min-h-8 sm:h-auto bg-gray-100 relative border p-1 flex flex-col"
       >
         <!-- date's header -->
-        <div class="w-full flex justify-end">
-          <div class="bg-gray-100 rounded-md md:px-1">{{calDay.day}}</div>
+        <div class="w-full flex justify-end mb-1">
+          <div
+            class="bg-gray-100 rounded-md md:px-1"
+            [ngClass]="{'bg-purple-500 text-white': isSameDate(calDay.date, currentDate)}"
+          >
+              {{calDay.day}}
+          </div>
         </div>
 
+        <!-- [cdkDropListConnectedTo]="getConnectedDropLists(31)" -->
+        <!-- [cdkDropListConnectedTo]="['cdk-drop-list-0', 'cdk-drop-list-1', 'cdk-drop-list-15']" -->
         <div
           class="h-full flex-col tasks"
-          cdkDropListGroup
           cdkDropList
+          [id]="'acdk-drop-list-' + i"
           [cdkDropListData]="calDay.events"
+          [cdkDropListConnectedTo]="getConnectedDropLists(31)"
           (cdkDropListDropped)="drop($event)"
         >
           <div
-            cdkDrag
             *ngFor="let task of calDay.events"
-            class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs pl-1"
+            cdkDrag
+            class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1"
           >
             <span> {{task}} </span>
           </div>
@@ -68,13 +78,13 @@
 
     <div class="mt-4 rounded-md lg:mt-0 lg:mx-8 md:pt-0 lg:col-start-3 lg:row-start-2">
       <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-8">
-        <!-- <h2 class="font-bold md:text-xl lg:text-3xl">{{pickedDateStr()}}</h2> -->
+        <h2 class=" font-bold md:text-xl lg:text-3xl">Events</h2>
       </div>
-      <!-- <div class="">
-        @for (task of getTasksForDay(pickedDate()); track $index) {
-        <div class="font-thin">{{task.title}}</div>
+      <div class="">
+        @for (event of pickedDayEvents$ | async; track $index) {
+        <div class="font-thin">{{event}}</div>
         }
-      </div> -->
+      </div>
     </div>
   </div>
 </div>
