@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, filter, map, of } from "rxjs";
+import { formatDateAsIso } from "../utils/utils";
 
 @Injectable({
   providedIn: "root",
@@ -22,6 +23,19 @@ export class CalendarService {
 
   setPickedDay(date: Date) {
     this.pickedDay$.next(date);
+  }
+
+  addNewEvent(date: Date, event: string) {
+    console.log(date, event)
+    const dateStr = formatDateAsIso(date);
+    const prevState = this.events$.getValue();
+    const dayEvents = prevState[dateStr] || [];
+    const updatedEventList = [...dayEvents, event];
+
+    this.events$.next({
+      ...prevState,
+      [dateStr]: updatedEventList,
+    });
   }
 
   // getEventsForMonth(year: number, month: number): Observable<Event[]> {

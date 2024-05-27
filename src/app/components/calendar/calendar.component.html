@@ -1,3 +1,7 @@
+<pre>
+  <!-- <span>Events size: {{eventsSize$ | async}}</span> -->
+</pre>
+
 <div>
   <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1400px] mx-auto grid-cols-1 lg:grid-cols-3">
     <div class="flex items-center justify-between mb-8 lg:mb-0 lg:place-items-start lg:col-span-2 lg:h-24">
@@ -5,6 +9,7 @@
         <!-- <span class="font-bold">{{ selectedMonthStr() }}</span> -->
         <!-- <span class="font-thin"> {{ selectedYear() }}</span> -->
         {{selectedMonthStr$ | async}}
+
       </p>
 
       <div class="space-x-1 text-white">
@@ -27,6 +32,7 @@
         (click)="handleDayClick(calDay.date)"
         cdkDropListGroup
         class="square min-h-8 sm:h-auto bg-gray-100 relative border p-1 flex flex-col"
+        [ngClass]="{'bg-yellow-50': isSameDate(calDay.date, pickedDay$.getValue())}"
       >
         <!-- date's header -->
         <div class="w-full flex justify-end mb-1">
@@ -34,7 +40,7 @@
             class="bg-gray-100 rounded-md md:px-1"
             [ngClass]="{'bg-purple-500 text-white': isSameDate(calDay.date, currentDate)}"
           >
-              {{calDay.day}}
+            {{calDay.day}}
           </div>
         </div>
 
@@ -48,13 +54,16 @@
           [cdkDropListConnectedTo]="getConnectedDropLists(31)"
           (cdkDropListDropped)="drop($event)"
         >
-          <div
-            *ngFor="let task of calDay.events"
-            cdkDrag
-            class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1"
-          >
-            <span> {{task}} </span>
-          </div>
+
+          <ng-container *ngIf="getEventsForDay(calDay.date) | async as events">
+            <div
+              *ngFor="let event of events"
+              cdkDrag
+              class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1"
+            >
+              <span> {{event}} </span>
+            </div>
+          </ng-container>
 
           <!-- <div
             *ngIf="getTasksForDay(day.date).length > 0"
@@ -76,12 +85,13 @@
       </button>
     </div>
 
+    <!-- getEventsForDay(calDay.date) | async as events -->
     <div class="mt-4 rounded-md lg:mt-0 lg:mx-8 md:pt-0 lg:col-start-3 lg:row-start-2">
       <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-8">
-        <h2 class=" font-bold md:text-xl lg:text-3xl">Events</h2>
+        <h2 class="font-bold md:text-xl lg:text-3xl">Events</h2>
       </div>
       <div class="">
-        @for (event of pickedDayEvents$ | async; track $index) {
+        @for (event of getEventsForDay(pickedDay$.getValue()) | async; track $index) {
         <div class="font-thin">{{event}}</div>
         }
       </div>

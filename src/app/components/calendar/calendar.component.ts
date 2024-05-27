@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { map } from "rxjs";
+import { Observable, map } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import {
   CdkDragDrop,
@@ -14,6 +14,7 @@ import { CalendarDay, CalendarMonth } from "../../interfaces/calendar.interface"
 import { DialogComponent } from "../dialog/dialog.component";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
 import { CalendarService } from "../../services/calendar.service";
+import { formatDateAsIso } from "../../utils/utils";
 
 @Component({
   selector: "app-calendar",
@@ -25,7 +26,7 @@ export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   calendarService = inject(CalendarService);
 
-  currentDate = new Date()
+  currentDate = new Date();
 
   selectedMonth$ = this.calendarService.selectedMonth$;
   selectedMonthStr$ = this.selectedMonth$.pipe(map((date) => this.getMonthStr(date)));
@@ -35,16 +36,17 @@ export class CalendarComponent {
   events$ = this.calendarService.events$;
 
   pickedDay$ = this.calendarService.pickedDay$;
-  pickedDayEvents$ = this.pickedDay$.pipe(map((date) => this.getDayEvents(date)));
 
-  // calMonthDays$ = this.selectedMonth$.pipe(map((date) => this.getDaysInMonth(date)));
-  // {{selectedMonthEvents$.getValue()[formatDateAsIso(pickedDay$.getValue())]}}
-  // this.selectedMonthEvents$.getValue()[this.formatDateAsIso(currentDay)] ?? []
+  // pickedDayEvents$ = this.pickedDay$.pipe(map((date) => this.getDayEvents(date)));
 
   constructor(public dialog: MatDialog) {}
 
+  getEventsForDay(date: Date): Observable<string[]> {
+    return this.events$.pipe(map((events) => events[this.formatDateAsIso(date)] || []));
+  }
+
   getDayEvents(date: Date) {
-    return this.events$.getValue()[this.formatDateAsIso(date)];
+    return this.events$.getValue()[formatDateAsIso(date)];
   }
 
   getConnectedDropLists(daysInMonth: number): any[] {
@@ -67,7 +69,7 @@ export class CalendarComponent {
 
     for (let i = 1; i <= daysInSelectedMonth; i++) {
       const currentDay = new Date(date.getFullYear(), date.getMonth(), i);
-      const events = this.events$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
+      const events = this.events$.getValue()[formatDateAsIso(currentDay)] ?? [];
 
       const calendarDay: CalendarDay = {
         date: currentDay,
@@ -85,8 +87,9 @@ export class CalendarComponent {
     console.log(event.container.data);
 
     if (event.previousContainer === event.container) {
-      // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      return
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      console.log("❌ same container");
+      return;
     } else {
       console.log("✅ different container");
 
@@ -99,12 +102,14 @@ export class CalendarComponent {
       data: {
         title: "Create a New Event",
         component: EventComposerComponent,
-        payload: {},
+        payload: { date: formatDateAsIso(this.pickedDay$.getValue()) },
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        console.log(result);
+        this.calendarService.addNewEvent(new Date(result.date), result.title);
       }
     });
   }
@@ -162,19 +167,15 @@ export class CalendarComponent {
     return nextMonth.getDate();
   }
 
-  formatDateAsIso(date: Date): string {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  }
-
   isSameDate(dateA: Date, dateB: Date) {
     return (
       dateA.getFullYear() === dateB.getFullYear() &&
       dateA.getMonth() === dateB.getMonth() &&
       dateA.getDate() === dateB.getDate()
     );
+  }
+
+  formatDateAsIso(date: Date): string {
+    return formatDateAsIso(date);
   }
 }
