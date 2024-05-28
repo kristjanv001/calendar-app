@@ -9,7 +9,7 @@
     [attr.aria-expanded]="accordionItem.expanded"
     [attr.aria-controls]="'accordion-body-' + $index"
   >
-    <div class="bg-gray-100 p-2" (click)="accordionItem.toggle()">
+    <div class="bg-gray-100 p-2 flex items-center justify-between" (click)="accordionItem.toggle()">
       {{ event }}
       <span class=""> {{ accordionItem.expanded ? 'close' : 'open' }} </span>
     </div>
@@ -20,7 +20,17 @@
       [attr.id]="'accordion-body-' + $index"
       [attr.aria-labelledby]="'accordion-header-' + $index"
     >
-      Description about {{ event }}
+      <div>
+        <div class="flex items-center justify-between">
+          <h2 class="font-bold">{{event}}</h2>
+          <div class="flex space-x-4">
+            <button class="bg-gray-100 rounded-md px-2 py-1">Edit</button>
+            <button (click)="openConfirmDialog(event)" class="border rounded-md px-2 py-1">Remove</button>
+          </div>
+        </div>
+        <p class="font-light">Description about {{ event }}</p>
+
+      </div>
     </div>
   </cdk-accordion-item>
   }

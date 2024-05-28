@@ -1,5 +1,4 @@
 import { Component, Inject } from "@angular/core";
-import { MatDialogModule } from "@angular/material/dialog";
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
@@ -7,7 +6,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 @Component({
   selector: "app-event-composer",
   standalone: true,
-  imports: [MatDialogModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: "./event-composer.component.html",
 })
 export class EventComposerComponent {
@@ -17,6 +16,10 @@ export class EventComposerComponent {
     private dialogRef: MatDialogRef<EventComposerComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
+
+  ngOnInit() {
+    console.log(this.data)
+  }
 
   eventForm = new FormGroup({
     title: new FormControl("", [Validators.required, Validators.minLength(1), Validators.maxLength(50)]),

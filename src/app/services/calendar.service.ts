@@ -12,7 +12,8 @@ export class CalendarService {
     "2024-05-16": ["task1", "task2", "task3"],
     "2024-05-25": ["task4", "task5"],
     "2024-05-27": ["task6", "task7"],
-    "2024-06-01": ["task8", "task9", "task10"],
+    "2024-05-28": ["task8", "task9", "task10"],
+    "2024-06-01": ["tyjt", "axsfre", "rbhtr"],
   });
   pickedDay$ = new BehaviorSubject(new Date());
 

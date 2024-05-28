@@ -2,9 +2,8 @@
   <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1400px] mx-auto grid-cols-1 lg:grid-cols-3">
     <div class="flex items-center justify-between mb-8 lg:mb-0 lg:place-items-start lg:col-span-2 lg:h-24">
       <p class="font-bold md:text-xl lg:text-4xl md:-mt-2">
-        <!-- <span class="font-bold">{{ selectedMonthStr() }}</span> -->
-        <!-- <span class="font-thin"> {{ selectedYear() }}</span> -->
-        {{selectedMonthStr$ | async}}
+        <span class="font-bold">{{selectedMonthStr$ | async}}</span>
+        <span class="font-thin"> {{ selectedYearStr$ | async }}</span>
       </p>
 
       <div class="space-x-1 text-white">
@@ -80,7 +79,7 @@
     </div>
 
     <div class="mt-4 rounded-md lg:mt-0 lg:mx-8 md:pt-0 lg:col-start-3 lg:row-start-2">
-      <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-8">
+      <div class="mb-2 flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-4">
         <h2 class="font-bold md:text-xl lg:text-3xl">Events</h2>
       </div>
       <app-event-list [events]="pickedDayEvents$ | async" />

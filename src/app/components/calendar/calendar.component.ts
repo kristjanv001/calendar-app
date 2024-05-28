@@ -9,6 +9,7 @@ import { EventComposerComponent } from "../event-composer/event-composer.compone
 import { CalendarService } from "../../services/calendar.service";
 import { formatDateAsIso } from "../../utils/utils";
 import { EventListComponent } from "../event-list/event-list.component";
+import { EventRemoveConfirmComponent } from "../event-remove-confirm/event-remove-confirm.component";
 
 @Component({
   selector: "app-calendar",
@@ -22,7 +23,8 @@ export class CalendarComponent {
   weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   currentDate = new Date();
   selectedMonth$ = this.calendarService.selectedMonth$;
-  selectedMonthStr$ = this.selectedMonth$.pipe(map((date) => this.getMonthStr(date)));
+  selectedMonthStr$ = this.selectedMonth$.pipe(map((date) => this.getMonth(date)));
+  selectedYearStr$ = this.selectedMonth$.pipe(map((date) => this.getYear(date)));
   selectedMonthOffset$ = this.selectedMonth$.pipe(map((date) => this.getOffset(date)));
   connectedDropListIds$ = this.selectedMonth$.pipe(map((date) => this.getConnectedDropLists(date)));
   calendarMonth$ = this.selectedMonth$.pipe(map((date) => this.createCalendarMonth(date)));
@@ -116,6 +118,8 @@ export class CalendarComponent {
       },
     });
 
+    console.log(dialogRef);
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log(result);
@@ -124,8 +128,12 @@ export class CalendarComponent {
     });
   }
 
-  getMonthStr(date: Date) {
+  getMonth(date: Date): string {
     return date.toLocaleString("default", { month: "long" });
+  }
+
+  getYear(date: Date): number {
+    return date.getFullYear();
   }
 
   getOffset(date: Date) {
