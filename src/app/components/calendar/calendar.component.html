@@ -59,12 +59,12 @@
             <span> {{event}} </span>
           </div>
 
-          <!-- <div
-            *ngIf="getTasksForDay(day.date).length > 0"
+          <div
+            *ngIf="events.length > 0"
             class="h-4 w-4 md:h-5 md:w-5 bg-blue-700 absolute -top-1 -left-1 md:-top-2 md:-left-2 rounded-full flex justify-center place-items-center text-white sm:hidden"
           >
-            <span> {{ getTasksForDay(day.date)?.length }} </span>
-          </div> -->
+            <span> {{ events.length }} </span>
+          </div>
         </div>
       </button>
     </div>
@@ -79,24 +79,11 @@
       </button>
     </div>
 
-    <!-- getEventsForDay(calDay.date) | async as events -->
     <div class="mt-4 rounded-md lg:mt-0 lg:mx-8 md:pt-0 lg:col-start-3 lg:row-start-2">
       <div class="flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-8">
         <h2 class="font-bold md:text-xl lg:text-3xl">Events</h2>
       </div>
-      <div class="">
-        @for (event of getEventsForDay(pickedDay$.getValue()) | async; track $index) {
-        <div class="font-thin">{{event}}</div>
-        }
-      </div>
+      <app-event-list [events]="pickedDayEvents$ | async" />
     </div>
   </div>
 </div>
-
-<!-- <pre>
-  <span class="text-xs">{{connectedDropListIds$ | async | json}}</span>
-</pre> -->
-
-<!-- <pre>
-  <span class="text-xs">{{events$ | async | json}}</span>
-</pre> -->

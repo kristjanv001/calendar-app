@@ -1,25 +1,19 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Observable, map } from "rxjs";
+import { Observable, combineLatest, map } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-  copyArrayItem,
-  CdkDrag,
-  CdkDropList,
-} from "@angular/cdk/drag-drop";
+import { CdkDragDrop, moveItemInArray, CdkDrag, CdkDropList } from "@angular/cdk/drag-drop";
 import { CalendarDay, CalendarMonth } from "../../interfaces/calendar.interface";
 import { DialogComponent } from "../dialog/dialog.component";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
 import { CalendarService } from "../../services/calendar.service";
 import { formatDateAsIso } from "../../utils/utils";
+import { EventListComponent } from "../event-list/event-list.component";
 
 @Component({
   selector: "app-calendar",
   standalone: true,
-  imports: [CommonModule, CdkDropList, CdkDrag],
+  imports: [CommonModule, CdkDropList, CdkDrag, EventListComponent],
   templateUrl: "./calendar.component.html",
 })
 export class CalendarComponent {
@@ -34,6 +28,12 @@ export class CalendarComponent {
   calendarMonth$ = this.selectedMonth$.pipe(map((date) => this.createCalendarMonth(date)));
   events$ = this.calendarService.events$;
   pickedDay$ = this.calendarService.pickedDay$;
+  pickedDayEvents$: Observable<string[]> = combineLatest([this.pickedDay$, this.events$]).pipe(
+    map(([pickedDay, events]) => {
+      const dateStr = this.formatDateAsIso(pickedDay);
+      return events[dateStr] || [];
+    }),
+  );
 
   constructor(public dialog: MatDialog) {}
 
@@ -91,7 +91,7 @@ export class CalendarComponent {
       const prevContainerDate = this.getDateFromDropListId(event.previousContainer.id);
       const newContainerDate = this.getDateFromDropListId(event.container.id);
       // const movingItem = event.item.data
-      const movingItem = event.previousContainer.data[event.previousIndex]
+      const movingItem = event.previousContainer.data[event.previousIndex];
 
       if (prevContainerDate && newContainerDate) {
         this.calendarService.moveEvent(prevContainerDate, newContainerDate, movingItem);

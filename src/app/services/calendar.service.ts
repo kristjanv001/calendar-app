@@ -1,13 +1,14 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, filter, map, of } from "rxjs";
 import { formatDateAsIso } from "../utils/utils";
+import { Events } from "../interfaces/calendar.interface";
 
 @Injectable({
   providedIn: "root",
 })
 export class CalendarService {
   selectedMonth$ = new BehaviorSubject(new Date());
-  events$ = new BehaviorSubject<any>({
+  events$: BehaviorSubject<Events> = new BehaviorSubject<Events>({
     "2024-05-16": ["task1", "task2", "task3"],
     "2024-05-25": ["task4", "task5"],
     "2024-05-27": ["task6", "task7"],

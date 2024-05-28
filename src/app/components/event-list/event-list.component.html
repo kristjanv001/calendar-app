@@ -1,0 +1,27 @@
+<cdk-accordion *ngIf="events" class="block">
+  @for (event of events; track $index) {
+  <cdk-accordion-item
+    #accordionItem="cdkAccordionItem"
+    class="block border"
+    role="button"
+    tabindex="0"
+    [attr.id]="'accordion-header-' + $index"
+    [attr.aria-expanded]="accordionItem.expanded"
+    [attr.aria-controls]="'accordion-body-' + $index"
+  >
+    <div class="bg-gray-100 p-2" (click)="accordionItem.toggle()">
+      {{ event }}
+      <span class=""> {{ accordionItem.expanded ? 'close' : 'open' }} </span>
+    </div>
+    <div
+      class="p-2"
+      role="region"
+      [style.display]="accordionItem.expanded ? '' : 'none'"
+      [attr.id]="'accordion-body-' + $index"
+      [attr.aria-labelledby]="'accordion-header-' + $index"
+    >
+      Description about {{ event }}
+    </div>
+  </cdk-accordion-item>
+  }
+</cdk-accordion>

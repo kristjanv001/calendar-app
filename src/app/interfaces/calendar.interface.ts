@@ -1,3 +1,6 @@
+export interface Events {
+  [date: string]: string[];
+}
 
 export interface CalendarDay {
   date: Date;
