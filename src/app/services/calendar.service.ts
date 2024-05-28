@@ -26,7 +26,7 @@ export class CalendarService {
   }
 
   addNewEvent(date: Date, event: string) {
-    console.log(date, event)
+    // console.log("adding: ", date, event);
     const dateStr = formatDateAsIso(date);
     const prevState = this.events$.getValue();
     const dayEvents = prevState[dateStr] || [];
@@ -38,13 +38,21 @@ export class CalendarService {
     });
   }
 
-  // getEventsForMonth(year: number, month: number): Observable<Event[]> {
-  //   return of(this.events).pipe(
-  //     map((events) =>
-  //       events.filter((event) => {
-  //         return event.date.getFullYear() === year && event.date.getMonth() === month;
-  //       }),
-  //     ),
-  //   );
-  // }
+  removeEvent(date: Date, event: string) {
+    // console.log("removing: ", date, event);
+    const dateStr = formatDateAsIso(date);
+    const prevState = this.events$.getValue();
+    const dayEvents = prevState[dateStr] || [];
+    const updatedEventList = dayEvents.filter((e: string) => e !== event);
+
+    this.events$.next({
+      ...prevState,
+      [dateStr]: updatedEventList,
+    });
+  }
+
+  moveEvent(previousDate: Date, newDate: Date, event: string) {
+    this.removeEvent(previousDate, event);
+    this.addNewEvent(newDate, event);
+  }
 }

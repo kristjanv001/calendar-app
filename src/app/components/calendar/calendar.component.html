@@ -1,7 +1,3 @@
-<pre>
-  <!-- <span>Events size: {{eventsSize$ | async}}</span> -->
-</pre>
-
 <div>
   <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1400px] mx-auto grid-cols-1 lg:grid-cols-3">
     <div class="flex items-center justify-between mb-8 lg:mb-0 lg:place-items-start lg:col-span-2 lg:h-24">
@@ -9,7 +5,6 @@
         <!-- <span class="font-bold">{{ selectedMonthStr() }}</span> -->
         <!-- <span class="font-thin"> {{ selectedYear() }}</span> -->
         {{selectedMonthStr$ | async}}
-
       </p>
 
       <div class="space-x-1 text-white">
@@ -30,7 +25,6 @@
       <button
         *ngFor="let calDay of (calendarMonth$ | async)?.days; let i = index"
         (click)="handleDayClick(calDay.date)"
-        cdkDropListGroup
         class="square min-h-8 sm:h-auto bg-gray-100 relative border p-1 flex flex-col"
         [ngClass]="{'bg-yellow-50': isSameDate(calDay.date, pickedDay$.getValue())}"
       >
@@ -44,26 +38,26 @@
           </div>
         </div>
 
-        <!-- [cdkDropListConnectedTo]="getConnectedDropLists(31)" -->
         <!-- [cdkDropListConnectedTo]="['cdk-drop-list-0', 'cdk-drop-list-1', 'cdk-drop-list-15']" -->
+        <!-- [id]="'acdk-drop-list-' + i" -->
+        <!-- [id]="'droplist-' + formatDateAsIso(calDay.date)" -->
         <div
+          *ngIf="getEventsForDay(calDay.date) | async as events"
           class="h-full flex-col tasks"
           cdkDropList
-          [id]="'acdk-drop-list-' + i"
-          [cdkDropListData]="calDay.events"
-          [cdkDropListConnectedTo]="getConnectedDropLists(31)"
+          [id]="'droplist-' + formatDateAsIso(calDay.date)"
+          [cdkDropListData]="events"
+          [cdkDropListConnectedTo]="(connectedDropListIds$ | async) ?? []"
           (cdkDropListDropped)="drop($event)"
         >
-
-          <ng-container *ngIf="getEventsForDay(calDay.date) | async as events">
-            <div
-              *ngFor="let event of events"
-              cdkDrag
-              class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1"
-            >
-              <span> {{event}} </span>
-            </div>
-          </ng-container>
+          <div
+            *ngFor="let event of events"
+            cdkDrag
+            [cdkDragData]="event"
+            class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1"
+          >
+            <span> {{event}} </span>
+          </div>
 
           <!-- <div
             *ngIf="getTasksForDay(day.date).length > 0"
@@ -99,6 +93,10 @@
   </div>
 </div>
 
-<!-- <pre class="text-xs">
-  {{calendarMonth$ | async | json}}
+<!-- <pre>
+  <span class="text-xs">{{connectedDropListIds$ | async | json}}</span>
+</pre> -->
+
+<!-- <pre>
+  <span class="text-xs">{{events$ | async | json}}</span>
 </pre> -->

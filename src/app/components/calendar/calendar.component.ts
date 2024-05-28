@@ -23,21 +23,17 @@ import { formatDateAsIso } from "../../utils/utils";
   templateUrl: "./calendar.component.html",
 })
 export class CalendarComponent {
-  weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   calendarService = inject(CalendarService);
 
+  weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   currentDate = new Date();
-
   selectedMonth$ = this.calendarService.selectedMonth$;
   selectedMonthStr$ = this.selectedMonth$.pipe(map((date) => this.getMonthStr(date)));
   selectedMonthOffset$ = this.selectedMonth$.pipe(map((date) => this.getOffset(date)));
+  connectedDropListIds$ = this.selectedMonth$.pipe(map((date) => this.getConnectedDropLists(date)));
   calendarMonth$ = this.selectedMonth$.pipe(map((date) => this.createCalendarMonth(date)));
-
   events$ = this.calendarService.events$;
-
   pickedDay$ = this.calendarService.pickedDay$;
-
-  // pickedDayEvents$ = this.pickedDay$.pipe(map((date) => this.getDayEvents(date)));
 
   constructor(public dialog: MatDialog) {}
 
@@ -46,11 +42,18 @@ export class CalendarComponent {
   }
 
   getDayEvents(date: Date) {
-    return this.events$.getValue()[formatDateAsIso(date)];
+    return this.events$.getValue()[this.formatDateAsIso(date)];
   }
 
-  getConnectedDropLists(daysInMonth: number): any[] {
-    const arr = Array.from({ length: daysInMonth }, (_, index) => `acdk-drop-list-${index}`);
+  getConnectedDropLists(date: Date): string[] {
+    const daysInMonth = this.getDaysInMonth(date);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const arr = Array.from({ length: daysInMonth }, (_, index) => {
+      const dayDate = new Date(year, month, index + 1);
+      return `droplist-${this.formatDateAsIso(dayDate)}`;
+    });
 
     return arr;
   }
@@ -69,7 +72,7 @@ export class CalendarComponent {
 
     for (let i = 1; i <= daysInSelectedMonth; i++) {
       const currentDay = new Date(date.getFullYear(), date.getMonth(), i);
-      const events = this.events$.getValue()[formatDateAsIso(currentDay)] ?? [];
+      const events = this.events$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
 
       const calendarDay: CalendarDay = {
         date: currentDay,
@@ -79,22 +82,29 @@ export class CalendarComponent {
 
       calendarMonth.days.push(calendarDay);
     }
-    // console.log(calendarMonth);
     return calendarMonth;
   }
 
   drop(event: CdkDragDrop<any>) {
-    console.log(event.container.data);
+    // console.log(event);
+    if (event.previousContainer !== event.container) {
+      const prevContainerDate = this.getDateFromDropListId(event.previousContainer.id);
+      const newContainerDate = this.getDateFromDropListId(event.container.id);
+      // const movingItem = event.item.data
+      const movingItem = event.previousContainer.data[event.previousIndex]
 
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      console.log("❌ same container");
-      return;
+      if (prevContainerDate && newContainerDate) {
+        this.calendarService.moveEvent(prevContainerDate, newContainerDate, movingItem);
+      }
+
+      // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      console.log("✅ different container");
-
-      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     }
+  }
+
+  getDateFromDropListId(dropListId: string): Date {
+    return new Date(dropListId.substring(9));
   }
 
   openDialog() {
@@ -102,7 +112,7 @@ export class CalendarComponent {
       data: {
         title: "Create a New Event",
         component: EventComposerComponent,
-        payload: { date: formatDateAsIso(this.pickedDay$.getValue()) },
+        payload: { date: this.formatDateAsIso(this.pickedDay$.getValue()) },
       },
     });
 
