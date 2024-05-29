@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, filter, map, of } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { formatDateAsIso } from "../utils/utils";
 import { CalendarEvent, CalendarEvents } from "../interfaces/calendar.interface";
 import { nanoid } from "nanoid";

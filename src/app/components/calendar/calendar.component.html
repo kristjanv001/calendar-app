@@ -1,7 +1,7 @@
 <div>
   <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1400px] mx-auto grid-cols-1 lg:grid-cols-3">
-    <div class="flex items-center justify-between mb-8 lg:mb-0  lg:col-span-2 lg:h-24">
-      <p class="font-bold md:text-xl lg:text-4xl ">
+    <div class="flex items-center justify-between mb-8 lg:mb-0 lg:col-span-2 lg:h-24">
+      <p class="font-bold md:text-xl lg:text-4xl">
         <span class="font-bold">{{selectedMonthStr$ | async}}</span>
         <span class="font-thin"> {{ selectedYearStr$ | async }}</span>
       </p>
@@ -88,7 +88,7 @@
     </div>
 
     <!-- details -->
-    <div class="lg:mx-8 md:ml-1 lg:flex lg:justify-start lg:items-center ">
+    <div class="lg:mx-8 md:ml-1 lg:flex lg:justify-start lg:items-center">
       <button
         (click)="openDialog()"
         class="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-md px-2 py-1 text-white flex justify-center items-center"
@@ -108,11 +108,12 @@
       </button>
     </div>
 
-    <div class="mt-4 rounded-md lg:mt-0 lg:ml-8 md:pt-0 lg:col-start-3 lg:row-start-2">
-      <div class="mb-2 flex justify-between items-center md:flex-col-reverse md:items-start md:justify-start md:mb-4">
-        <h2 class="font-bold md:text-xl lg:text-3xl">Events</h2>
-      </div>
+    <div class="mt-4 rounded-md lg:mt-0 lg:ml-8 md:pt-0 lg:col-start-3 lg:row-start-2 border">
+      @if ((pickedDayEvents$ | async)!.length > 0) {
       <app-event-list [events]="pickedDayEvents$ | async" />
+      } @else {
+      <p class="text-gray-400 p-4">All clear</p>
+      }
     </div>
   </div>
 </div>

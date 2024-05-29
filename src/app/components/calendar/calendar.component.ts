@@ -126,8 +126,6 @@ export class CalendarComponent {
           date: new Date(result.date)
         };
 
-        console.log("✅ created a new event obj: ", newEvent);
-
         this.calendarService.addNewEvent(new Date(result.date), newEvent);
       }
     });

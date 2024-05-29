@@ -52,14 +52,11 @@ export class EventListComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-
         const updatedEvent = {
           ...result,
           id: event.id,
-          date: new Date(result.date)
-        }
-
-        console.log("✏️ edited event: ", updatedEvent);
+          date: new Date(result.date),
+        };
 
         this.calendarService.updateEvent(this.pickedDay$.getValue(), updatedEvent);
       }
