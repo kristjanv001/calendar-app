@@ -2,7 +2,7 @@
   @for (event of events; track $index) {
   <cdk-accordion-item
     #accordionItem="cdkAccordionItem"
-    class="block border "
+    class="block border"
     role="button"
     tabindex="0"
     [attr.id]="'accordion-header-' + $index"
@@ -12,7 +12,7 @@
     <div class="bg-gray-100 p-2 flex items-center justify-between" (click)="accordionItem.toggle()">
       {{ event.title }} @if(accordionItem.expanded) {
 
-      <div >
+      <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -54,7 +54,9 @@
         <div class="flex items-center justify-between mb-2">
           <h2 class="font-bold">Description</h2>
           <div class="flex space-x-4 text-xs">
-            <button class="border rounded-md px-3 py-1 flex items-center justify-center">
+            <button
+              (click)="openEditDialog(event)"
+              class="border rounded-md px-3 py-1 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

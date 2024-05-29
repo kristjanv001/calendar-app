@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
@@ -17,19 +17,18 @@ export class EventComposerComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
 
-  ngOnInit() {
-    console.log(this.data)
-  }
-
   eventForm = new FormGroup({
-    title: new FormControl("", [Validators.required, Validators.minLength(1), Validators.maxLength(50)]),
-    description: new FormControl("", [Validators.maxLength(50000)]),
+    title: new FormControl(this.data.payload.calendarEvent?.title ?? "", [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(50),
+    ]),
+    description: new FormControl(this.data.payload.calendarEvent?.description ?? "", [Validators.maxLength(50000)]),
     date: new FormControl(this.data.payload.date, Validators.required),
   });
 
   onSubmit() {
     if (this.eventForm.valid) {
-      console.log(this.eventForm.value)
       this.dialogRef.close(this.eventForm.value);
     } else {
       this.validateForm();

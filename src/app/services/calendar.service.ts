@@ -49,7 +49,7 @@ export class CalendarService {
   }
 
   addNewEvent(date: Date, event: CalendarEvent) {
-    // console.log("adding: ", date, event);
+    // console.log("adding to date: ", date);
     const dateStr = formatDateAsIso(date);
     const prevState: CalendarEvents = this.events$.getValue();
     const dayEvents: CalendarEvent[] = prevState[dateStr] || [];
@@ -72,6 +72,35 @@ export class CalendarService {
       ...prevState,
       [dateStr]: updatedEventList,
     });
+  }
+
+  updateEvent(date: Date, event: CalendarEvent) {
+    const dateStr = formatDateAsIso(date);
+    const prevState = this.events$.getValue();
+    const dayEvents = prevState[dateStr] || [];
+
+    const originalDate = formatDateAsIso(date);
+    const newDate = formatDateAsIso(event.date);
+
+    if (newDate !== originalDate) {
+      this.moveEvent(date, new Date(newDate), event);
+    } else {
+      const updatedEventList = dayEvents.map((e) => {
+        if (e.id === event.id) {
+          return {
+            ...event,
+            id: e.id,
+          };
+        } else {
+          return e;
+        }
+      });
+
+      this.events$.next({
+        ...prevState,
+        [dateStr]: updatedEventList,
+      });
+    }
   }
 
   moveEvent(previousDate: Date, newDate: Date, event: CalendarEvent) {

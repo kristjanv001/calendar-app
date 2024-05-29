@@ -118,20 +118,15 @@ export class CalendarComponent {
       },
     });
 
-    console.log(dialogRef);
-
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log(result);
-
         const newEvent: CalendarEvent = {
+          ...result,
           id: nanoid(),
-          title: result.title,
-          description: result.description,
-          date: new Date(result.date), // include time: result.time
+          date: new Date(result.date)
         };
 
-        console.log("new event obj: ", newEvent);
+        console.log("✅ created a new event obj: ", newEvent);
 
         this.calendarService.addNewEvent(new Date(result.date), newEvent);
       }
