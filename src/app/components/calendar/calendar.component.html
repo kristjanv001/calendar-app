@@ -61,7 +61,7 @@
 
         <div
           *ngIf="getEventsForDay(calDay.date) | async as events"
-          class="h-full flex-col tasks"
+          class="w-full h-full flex-col tasks"
           cdkDropList
           [id]="'droplist-' + formatDateAsIso(calDay.date)"
           [cdkDropListData]="events"
