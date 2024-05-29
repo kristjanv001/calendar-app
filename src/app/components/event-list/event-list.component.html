@@ -10,7 +10,7 @@
     [attr.aria-controls]="'accordion-body-' + $index"
   >
     <div class="bg-gray-100 p-2 flex items-center justify-between" (click)="accordionItem.toggle()">
-      {{ event }}
+      {{ event.title }}
       <span class=""> {{ accordionItem.expanded ? 'close' : 'open' }} </span>
     </div>
     <div
@@ -22,14 +22,13 @@
     >
       <div>
         <div class="flex items-center justify-between">
-          <h2 class="font-bold">{{event}}</h2>
+          <h2 class="font-bold">Description</h2>
           <div class="flex space-x-4">
             <button class="bg-gray-100 rounded-md px-2 py-1">Edit</button>
             <button (click)="openConfirmDialog(event)" class="border rounded-md px-2 py-1">Remove</button>
           </div>
         </div>
-        <p class="font-light">Description about {{ event }}</p>
-
+        <p class="font-light">Description about {{ event.description }}</p>
       </div>
     </div>
   </cdk-accordion-item>

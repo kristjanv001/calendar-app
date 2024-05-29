@@ -1,10 +1,11 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogComponent } from "../dialog/dialog.component";
 import { EventRemoveConfirmComponent } from "../event-remove-confirm/event-remove-confirm.component";
-import { formatDateAsIso } from "../../utils/utils";
+import { CalendarService } from "../../services/calendar.service";
+import { CalendarEvent } from "../../interfaces/calendar.interface";
 
 @Component({
   selector: "app-event-list",
@@ -13,28 +14,27 @@ import { formatDateAsIso } from "../../utils/utils";
   templateUrl: "./event-list.component.html",
 })
 export class EventListComponent {
-  @Input() events: string[] | null = [];
+  calendarService = inject(CalendarService);
+  @Input() events: CalendarEvent[] | null = [];
+  pickedDay$ = this.calendarService.pickedDay$;
 
   constructor(public dialog: MatDialog) {}
 
-  openConfirmDialog(event: string) {
+  openConfirmDialog(event: CalendarEvent) {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: "Are you sure?",
         component: EventRemoveConfirmComponent,
-        payload: { date: formatDateAsIso(new Date()) },
+        payload: {
+          event: event,
+        },
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log(result);
-        // ⚠️ get event name and date --> call service
-        // this.calendarService.addNewEvent(new Date(result.date), result.title);
+        this.calendarService.removeEvent(this.pickedDay$.getValue(), event);
       }
     });
   }
-
-
-
 }

@@ -23,6 +23,7 @@ export class EventComposerComponent {
 
   eventForm = new FormGroup({
     title: new FormControl("", [Validators.required, Validators.minLength(1), Validators.maxLength(50)]),
+    description: new FormControl("", [Validators.maxLength(50000)]),
     date: new FormControl(this.data.payload.date, Validators.required),
   });
 

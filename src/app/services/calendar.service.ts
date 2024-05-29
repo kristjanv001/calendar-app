@@ -1,20 +1,41 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, filter, map, of } from "rxjs";
 import { formatDateAsIso } from "../utils/utils";
-import { Events } from "../interfaces/calendar.interface";
+import { CalendarEvent, CalendarEvents } from "../interfaces/calendar.interface";
+import { nanoid } from "nanoid";
+
+const initialEvents = {
+  "2024-05-16": [
+    { id: nanoid(), date: new Date("2024-05-16"), title: "task1", description: "Description for task1" },
+    { id: nanoid(), date: new Date("2024-05-16"), title: "task2", description: "Description for task2" },
+    { id: nanoid(), date: new Date("2024-05-16"), title: "task3", description: "Description for task3" },
+  ],
+  "2024-05-25": [
+    { id: nanoid(), date: new Date("2024-05-25"), title: "task4", description: "Description for task4" },
+    { id: nanoid(), date: new Date("2024-05-25"), title: "task5", description: "Description for task5" },
+  ],
+  "2024-05-27": [
+    { id: nanoid(), date: new Date("2024-05-27"), title: "task6", description: "Description for task6" },
+    { id: nanoid(), date: new Date("2024-05-27"), title: "task7", description: "Description for task7" },
+  ],
+  "2024-05-29": [
+    { id: nanoid(), date: new Date("2024-05-29"), title: "task8", description: "Description for task8" },
+    { id: nanoid(), date: new Date("2024-05-29"), title: "task9", description: "Description for task9" },
+    { id: nanoid(), date: new Date("2024-05-29"), title: "task10", description: "Description for task10" },
+  ],
+  "2024-06-01": [
+    { id: nanoid(), date: new Date("2024-06-01"), title: "tyjt", description: "Description for tyjt" },
+    { id: nanoid(), date: new Date("2024-06-01"), title: "axsfre", description: "Description for axsfre" },
+    { id: nanoid(), date: new Date("2024-06-01"), title: "rbhtr", description: "Description for rbhtr" },
+  ],
+};
 
 @Injectable({
   providedIn: "root",
 })
 export class CalendarService {
   selectedMonth$ = new BehaviorSubject(new Date());
-  events$: BehaviorSubject<Events> = new BehaviorSubject<Events>({
-    "2024-05-16": ["task1", "task2", "task3"],
-    "2024-05-25": ["task4", "task5"],
-    "2024-05-27": ["task6", "task7"],
-    "2024-05-28": ["task8", "task9", "task10"],
-    "2024-06-01": ["tyjt", "axsfre", "rbhtr"],
-  });
+  events$: BehaviorSubject<CalendarEvents> = new BehaviorSubject<CalendarEvents>(initialEvents);
   pickedDay$ = new BehaviorSubject(new Date());
 
   constructor() {}
@@ -27,12 +48,12 @@ export class CalendarService {
     this.pickedDay$.next(date);
   }
 
-  addNewEvent(date: Date, event: string) {
+  addNewEvent(date: Date, event: CalendarEvent) {
     // console.log("adding: ", date, event);
     const dateStr = formatDateAsIso(date);
-    const prevState = this.events$.getValue();
-    const dayEvents = prevState[dateStr] || [];
-    const updatedEventList = [...dayEvents, event];
+    const prevState: CalendarEvents = this.events$.getValue();
+    const dayEvents: CalendarEvent[] = prevState[dateStr] || [];
+    const updatedEventList: CalendarEvent[] = [...dayEvents, event];
 
     this.events$.next({
       ...prevState,
@@ -40,12 +61,12 @@ export class CalendarService {
     });
   }
 
-  removeEvent(date: Date, event: string) {
+  removeEvent(date: Date, event: CalendarEvent) {
     // console.log("removing: ", date, event);
     const dateStr = formatDateAsIso(date);
     const prevState = this.events$.getValue();
     const dayEvents = prevState[dateStr] || [];
-    const updatedEventList = dayEvents.filter((e: string) => e !== event);
+    const updatedEventList = dayEvents.filter((e) => e.id !== event.id);
 
     this.events$.next({
       ...prevState,
@@ -53,7 +74,7 @@ export class CalendarService {
     });
   }
 
-  moveEvent(previousDate: Date, newDate: Date, event: string) {
+  moveEvent(previousDate: Date, newDate: Date, event: CalendarEvent) {
     this.removeEvent(previousDate, event);
     this.addNewEvent(newDate, event);
   }

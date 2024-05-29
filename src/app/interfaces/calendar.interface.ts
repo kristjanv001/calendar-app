@@ -1,11 +1,18 @@
-export interface Events {
-  [date: string]: string[];
+export interface CalendarEvents {
+  [date: string]: CalendarEvent[];
+}
+
+export interface CalendarEvent {
+  id: string;
+  date: Date;
+  title: string
+  description: string
 }
 
 export interface CalendarDay {
   date: Date;
   day: number;
-  events: string[];
+
 }
 
 export interface CalendarMonth {

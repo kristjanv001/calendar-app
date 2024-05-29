@@ -11,6 +11,16 @@
         </label>
       </div>
 
+      <div class="mb-2">
+        <label>
+          <span class="block text-sm mb-1"> Description: </span>
+          <input class="border p-1 rounded-md md:w-96" type="text" formControlName="description" />
+          @if(triedToSubmit) {
+          <span class="text-red-600 block text-xs">{{ getErrorMessage('description') }}</span>
+          }
+        </label>
+      </div>
+
       <div>
         <label>
           <span class="block text-sm mb-1"> Date: </span>

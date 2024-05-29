@@ -3,13 +3,13 @@ import { CommonModule } from "@angular/common";
 import { Observable, combineLatest, map } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { CdkDragDrop, moveItemInArray, CdkDrag, CdkDropList } from "@angular/cdk/drag-drop";
-import { CalendarDay, CalendarMonth } from "../../interfaces/calendar.interface";
+import { nanoid } from "nanoid";
+import { CalendarDay, CalendarMonth, CalendarEvent, CalendarEvents } from "../../interfaces/calendar.interface";
 import { DialogComponent } from "../dialog/dialog.component";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
 import { CalendarService } from "../../services/calendar.service";
 import { formatDateAsIso } from "../../utils/utils";
 import { EventListComponent } from "../event-list/event-list.component";
-import { EventRemoveConfirmComponent } from "../event-remove-confirm/event-remove-confirm.component";
 
 @Component({
   selector: "app-calendar",
@@ -30,7 +30,7 @@ export class CalendarComponent {
   calendarMonth$ = this.selectedMonth$.pipe(map((date) => this.createCalendarMonth(date)));
   events$ = this.calendarService.events$;
   pickedDay$ = this.calendarService.pickedDay$;
-  pickedDayEvents$: Observable<string[]> = combineLatest([this.pickedDay$, this.events$]).pipe(
+  pickedDayEvents$: Observable<CalendarEvent[]> = combineLatest([this.pickedDay$, this.events$]).pipe(
     map(([pickedDay, events]) => {
       const dateStr = this.formatDateAsIso(pickedDay);
       return events[dateStr] || [];
@@ -39,7 +39,7 @@ export class CalendarComponent {
 
   constructor(public dialog: MatDialog) {}
 
-  getEventsForDay(date: Date): Observable<string[]> {
+  getEventsForDay(date: Date): Observable<CalendarEvent[]> {
     return this.events$.pipe(map((events) => events[this.formatDateAsIso(date)] || []));
   }
 
@@ -74,12 +74,12 @@ export class CalendarComponent {
 
     for (let i = 1; i <= daysInSelectedMonth; i++) {
       const currentDay = new Date(date.getFullYear(), date.getMonth(), i);
-      const events = this.events$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
+      // const events = this.events$.getValue()[this.formatDateAsIso(currentDay)] ?? [];
 
       const calendarDay: CalendarDay = {
         date: currentDay,
         day: i,
-        events: events,
+        // events: events, // ⚠️ remove?
       };
 
       calendarMonth.days.push(calendarDay);
@@ -123,7 +123,17 @@ export class CalendarComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log(result);
-        this.calendarService.addNewEvent(new Date(result.date), result.title);
+
+        const newEvent: CalendarEvent = {
+          id: nanoid(),
+          title: result.title,
+          description: result.description,
+          date: new Date(result.date), // include time: result.time
+        };
+
+        console.log("new event obj: ", newEvent);
+
+        this.calendarService.addNewEvent(new Date(result.date), newEvent);
       }
     });
   }
