@@ -4,50 +4,15 @@ import { formatDateAsIso } from "../utils/utils";
 import { CalendarEvent, CalendarEvents } from "../interfaces/calendar.interface";
 import { nanoid } from "nanoid";
 
-const initialEvents: CalendarEvents = {
-  "2024-05-16": [
-    {
-      id: nanoid(),
-      time: "13:15",
-      title: "Meeting",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      id: nanoid(),
-      time: "09:25",
-      title: "Meeting",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      id: nanoid(),
-      time: "08:30",
-      title: "Dentist",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-  ],
-  "2024-05-30": [
-    {
-      id: nanoid(),
-      time: "09:30",
-      title: "Event 3",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-  ],
-};
-
 @Injectable({
   providedIn: "root",
 })
 export class CalendarService {
   selectedMonth$ = new BehaviorSubject(new Date());
-  events$: BehaviorSubject<CalendarEvents> = new BehaviorSubject<CalendarEvents>(initialEvents);
+  events$: BehaviorSubject<CalendarEvents> = new BehaviorSubject<CalendarEvents>(this.genMockEvents());
   pickedDay$ = new BehaviorSubject(new Date());
 
-  constructor() {
-    // this.events$.subscribe((events) => {
-    //   console.log(events);
-    // });
-  }
+  constructor() {}
 
   setSelectedMonth(date: Date) {
     this.selectedMonth$.next(date);
@@ -88,33 +53,56 @@ export class CalendarService {
       this.moveEvent(oldDate, newDate, event);
     } else {
       this.moveEvent(oldDate, oldDate, event);
-      // const dateStr = formatDateAsIso(date);
-      // const prevState = this.events$.getValue();
-      // const dayEvents = prevState[dateStr] || [];
-
-      // const updatedEventList = dayEvents.map((e) => {
-      //   if (e.id === event.id) {
-      //     return {
-      //       ...event,
-      //       id: e.id,
-      //     };
-      //   } else {
-      //     return e;
-      //   }
-      // });
-
-      // this.events$.next({
-      //   ...prevState,
-      //   [dateStr]: updatedEventList,
-      // });
     }
   }
 
   moveEvent(oldDate: Date, newDate: Date, event: CalendarEvent) {
     this.removeEvent(oldDate, event);
     this.addNewEvent(newDate, event);
+  }
 
-    // console.log("prev date events: ", this.events$.getValue()[formatDateAsIso(previousDate)]);
-    // console.log("new date events", this.events$.getValue()[formatDateAsIso(newDate)]);
+  private genMockEvents() {
+    const today = new Date();
+    const fifth = new Date(today.getFullYear(), today.getMonth(), 5);
+
+
+    const initialEvents: CalendarEvents = {
+      [formatDateAsIso(today)]: [
+        {
+          id: nanoid(),
+          time: "13:15",
+          title: "Meeting",
+          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        },
+        {
+          id: nanoid(),
+          time: "09:25",
+          title: "Meeting",
+          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        },
+        {
+          id: nanoid(),
+          time: "08:30",
+          title: "Dentist",
+          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        },
+        {
+          id: nanoid(),
+          time: "10:15",
+          title: "Meeting",
+          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        },
+      ],
+      [formatDateAsIso(fifth)]: [
+        {
+          id: nanoid(),
+          time: "09:30",
+          title: "Interview",
+          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        },
+      ],
+    };
+
+    return initialEvents;
   }
 }

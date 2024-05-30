@@ -1,6 +1,6 @@
 <div>
-  <div class="px-4 md:px-8 grid grid-rows-[max-content_1fr] max-w-[1400px] mx-auto grid-cols-1 lg:grid-cols-3">
-    <div class="flex items-center justify-between mb-8 lg:mb-0 lg:col-span-2 lg:h-24">
+  <div class="px-4 lg:px-8 grid grid-rows-[max-content_1fr] max-w-[1400px] mx-auto grid-cols-1 lg:grid-cols-4">
+    <div class="flex items-center justify-between mb-8 lg:mb-0 lg:col-span-3 lg:h-24">
       <p class="font-bold md:text-xl lg:text-4xl">
         <span class="font-bold">{{selectedMonthStr$ | async}}</span>
         <span class="font-thin"> {{ selectedYearStr$ | async }}</span>
@@ -22,7 +22,7 @@
     </div>
 
     <!-- grid -->
-    <div class="grid grid-cols-7 gap-1 md:row-start-2 md:col-span-2">
+    <div class="grid grid-cols-7 gap-1 md:row-start-2 md:col-span-3">
       @for (day of weekDays; track $index) {
       <span class="">{{ day }}</span>
       } @for (_ of [].constructor( selectedMonthOffset$ | async ); track $index) {
@@ -38,7 +38,7 @@
         <!-- date's header -->
         <div class="w-full flex justify-end mb-1">
           <div
-            class="bg-gray-100 rounded-md md:px-1"
+            class="bg-gray-100 rounded-md md:px-1 text-xs xl:text-base"
             [ngClass]="{'bg-purple-500 text-white': isSameDate(calDay.date, currentDate)}"
           >
             {{calDay.day}}
@@ -54,20 +54,24 @@
           [cdkDropListConnectedTo]="(connectedDropListIds$ | async) ?? []"
           (cdkDropListDropped)="drop($event)"
         >
-          <div
-            *ngFor="let event of events"
-            cdkDrag
-            [cdkDragData]="event"
-            class="hidden sm:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1 items-center"
-          >
-            <span class="mr-1">{{event.time}}</span>
-
-            <span> {{truncate(event.title)}} </span>
+          <div>
+            <div
+              *ngFor="let event of events.slice(0,3)"
+              cdkDrag
+              [cdkDragData]="event"
+              class="hidden md:flex overflow-hidden bg-blue-200 border rounded-xl text-start text-xs px-1 items-center"
+            >
+              <span class="hidden xl:inline mr-1 text-blue-500">{{event.time}}</span>
+              <span> {{truncate(event.title)}} </span>
+            </div>
           </div>
+
+          <!-- ellips -->
+          <span *ngIf="events.length > 3" class="hidden md:inline-flex">...</span>
 
           <div
             *ngIf="events.length > 0"
-            class="h-4 w-4 md:h-5 md:w-5 bg-blue-700 absolute -top-1 -left-1 md:-top-2 md:-left-2 rounded-full flex justify-center place-items-center text-white sm:hidden"
+            class="h-4 w-4 md:h-5 md:w-5 bg-blue-700 absolute -top-1 -left-1 md:-top-2 md:-left-2 rounded-full flex justify-center place-items-center text-white md:hidden"
           >
             <span> {{ events.length }} </span>
           </div>
@@ -76,7 +80,7 @@
     </div>
 
     <!-- details -->
-    <div class="lg:mx-8 md:ml-1 lg:flex lg:justify-start lg:items-center">
+    <div class="lg:ml-2 xl:ml-8 md:ml-1 lg:flex lg:justify-start lg:items-center">
       <button
         (click)="openCreateEventDialog()"
         class="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-md px-2 py-1 text-white flex justify-center items-center"
@@ -86,7 +90,9 @@
       </button>
     </div>
 
-    <div class="mt-4 rounded-md lg:mt-0 lg:ml-8 md:pt-0 lg:col-start-3 lg:row-start-2 border">
+    <div
+      class="mt-4 rounded-md lg:mt-0 lg:ml-2 xl:ml-8 md:pt-0 lg:col-start-4 lg:row-start-2 border lg:max-h-[650px] xl:max-h-[800px] md:col-span-2"
+    >
       @if ((pickedDayEvents$ | async)!.length > 0) {
       <app-event-list [events]="pickedDayEvents$ | async" />
       } @else {
