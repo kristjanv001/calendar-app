@@ -1,51 +1,27 @@
-<cdk-accordion *ngIf="events" class="block">
+<div *ngIf="events" class="">
   @for (event of events; track $index) {
-  <cdk-accordion-item
-    #accordionItem="cdkAccordionItem"
-    class="block border"
-    role="button"
-    tabindex="0"
-    [attr.id]="'accordion-header-' + $index"
-    [attr.aria-expanded]="accordionItem.expanded"
-    [attr.aria-controls]="'accordion-body-' + $index"
-  >
-    <div class="bg-gray-100 p-2 flex items-center justify-between" (click)="accordionItem.toggle()">
-      {{ event.title }} @if(accordionItem.expanded) {
-      <div icon="chevronDown"></div>
-      } @else {
-      <div icon="chevronUp"></div>
-      }
+
+  <div class="flex items-center justify-between bg-gray-100 p-4">
+    <div class="flex items-center justify-start">
+      <span class="mr-2 text-blue-500">{{ event.time }}</span>
+      <span>{{ event.title }} </span>
     </div>
-    <div
-      class="p-2 md:p-4"
-      role="region"
-      [style.display]="accordionItem.expanded ? '' : 'none'"
-      [attr.id]="'accordion-body-' + $index"
-      [attr.aria-labelledby]="'accordion-header-' + $index"
-    >
-      <div>
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="font-bold">Description</h2>
-          <div class="flex space-x-4 text-xs">
-            <button
-              (click)="openEditDialog(event)"
-              class="border rounded-md px-3 py-1 flex items-center justify-center"
-            >
-              <div icon="edit"></div>
-              <span class="mt-0.5"> Edit </span>
-            </button>
-            <button
-              (click)="openRemoveConfirmDialog(event)"
-              class="border rounded-md px-2 py-1 flex items-center justify-center"
-            >
-              <div icon="trash"></div>
-              <span class="mt-0.5"> Remove </span>
-            </button>
-          </div>
-        </div>
-        <p class="font-light">{{ event.description }}</p>
-      </div>
+    <div class="flex space-x-2 text-xs">
+      <button (click)="openEditDialog(event)" class="border rounded-md px-3 py-1 flex items-center justify-center">
+        <div icon="edit"></div>
+        <span class="mt-0.5"> Edit </span>
+      </button>
+      <button
+        (click)="openRemoveConfirmDialog(event)"
+        class="border rounded-md px-2 py-1 flex items-center justify-center"
+      >
+        <div icon="trash"></div>
+        <span class="mt-0.5"> Remove </span>
+      </button>
     </div>
-  </cdk-accordion-item>
+  </div>
+  <div class="p-4">
+    <p class="font-light">{{ event.description }}</p>
+  </div>
   }
-</cdk-accordion>
+</div>
