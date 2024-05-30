@@ -41,7 +41,12 @@ export class CalendarComponent {
   constructor(public dialog: MatDialog) {}
 
   getEventsForDay(date: Date): Observable<CalendarEvent[]> {
-    return this.events$.pipe(map((events) => events[this.formatDateAsIso(date)] || []));
+    return this.events$.pipe(
+      map((events) => {
+        const dayEvents = events[this.formatDateAsIso(date)] || [];
+        return this.sortEventsByTime(dayEvents);
+      }),
+    );
   }
 
   getDayEvents(date: Date) {
@@ -182,6 +187,14 @@ export class CalendarComponent {
   }
 
   // utils
+  sortEventsByTime(events: CalendarEvent[]): CalendarEvent[] {
+    return events.sort((a, b) => {
+      const [hourA, minuteA] = a.time.split(":").map(Number);
+      const [hourB, minuteB] = b.time.split(":").map(Number);
+      return hourA - hourB || minuteA - minuteB;
+    });
+  }
+
   getDaysInMonth(date: Date): number {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -201,5 +214,12 @@ export class CalendarComponent {
 
   formatDateAsIso(date: Date): string {
     return formatDateAsIso(date);
+  }
+
+  truncate(str: string, allowedLength: number = 7): string {
+    if (str.length > allowedLength) {
+      return `${str.substring(0, allowedLength)}...`;
+    }
+    return str;
   }
 }

@@ -8,14 +8,20 @@ const initialEvents: CalendarEvents = {
   "2024-05-16": [
     {
       id: nanoid(),
-      time: "07:45",
-      title: "Event 1",
+      time: "13:15",
+      title: "Meeting",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
       id: nanoid(),
-      time: "13:25",
-      title: "Event 2",
+      time: "09:25",
+      title: "Meeting",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    },
+    {
+      id: nanoid(),
+      time: "08:30",
+      title: "Dentist",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
   ],
