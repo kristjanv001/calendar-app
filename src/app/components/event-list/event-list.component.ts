@@ -8,34 +8,35 @@ import { CalendarService } from "../../services/calendar.service";
 import { CalendarEvent } from "../../interfaces/calendar.interface";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
 import { formatDateAsIso } from "../../utils/utils";
+import { SvgIconDirective } from "../../directives/svg-icon.directive";
 
 @Component({
   selector: "app-event-list",
   standalone: true,
-  imports: [CommonModule, CdkAccordionModule],
+  imports: [CommonModule, CdkAccordionModule, SvgIconDirective],
   templateUrl: "./event-list.component.html",
 })
 export class EventListComponent {
   calendarService = inject(CalendarService);
   @Input() events: CalendarEvent[] | null = [];
-  pickedDay$ = this.calendarService.pickedDay$;
+  pickedDay$ = this.calendarService.pickedDay$; //⚠️ remove?
 
   constructor(public dialog: MatDialog) {}
 
-  openConfirmDialog(event: CalendarEvent) {
+  openRemoveConfirmDialog(eventToRemove: CalendarEvent) {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: "Are you sure?",
         component: EventRemoveConfirmComponent,
         payload: {
-          event: event,
+          event: eventToRemove,
         },
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.calendarService.removeEvent(this.pickedDay$.getValue(), event);
+        this.calendarService.removeEvent(this.pickedDay$.getValue(), eventToRemove);
       }
     });
   }
@@ -52,13 +53,18 @@ export class EventListComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const updatedEvent = {
-          ...result,
+        const { title, description, time } = result;
+        const updatedEvent: CalendarEvent = {
+          title,
+          description,
           id: event.id,
-          date: new Date(result.date),
+          time,
         };
 
-        this.calendarService.updateEvent(this.pickedDay$.getValue(), updatedEvent);
+        const oldDate = this.pickedDay$.getValue();
+        const newDate = new Date(result.date);
+
+        this.calendarService.updateEvent(oldDate, newDate, updatedEvent);
       }
     });
   }

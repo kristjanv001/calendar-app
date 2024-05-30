@@ -7,31 +7,17 @@
       </p>
 
       <div class="space-x-1 text-white flex">
-        <button (click)="setPrevMonth()" class="bg-gray-900 rounded-md px-2 py-1 flex justify-center items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-5"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
-          </svg>
-        </button>
+        <button
+          icon="chevronDoubleLeft"
+          (click)="setPrevMonth()"
+          class="bg-gray-900 rounded-md px-2 py-1 flex justify-center items-center"
+        ></button>
         <button (click)="setCurrMonth()" class="bg-gray-900 rounded-md px-2 py-1">Today</button>
-        <button (click)="setNextMonth()" class="bg-gray-900 rounded-md px-2 py-1 flex justify-center items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-5"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-          </svg>
-        </button>
+        <button
+          icon="chevronDoubleRight"
+          (click)="setNextMonth()"
+          class="bg-gray-900 rounded-md px-2 py-1 flex justify-center items-center"
+        ></button>
       </div>
     </div>
 
@@ -90,20 +76,10 @@
     <!-- details -->
     <div class="lg:mx-8 md:ml-1 lg:flex lg:justify-start lg:items-center">
       <button
-        (click)="openDialog()"
+        (click)="openCreateEventDialog()"
         class="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-md px-2 py-1 text-white flex justify-center items-center"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-5"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-
+        <div icon="plus"></div>
         <span> New Event </span>
       </button>
     </div>

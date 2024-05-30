@@ -20,10 +20,20 @@
       </label>
     </div>
 
-    <div>
+    <div class="mb-2">
       <label>
         <span class="block text-sm mb-1"> Date: </span>
-        <input formControlName="date" class="md:w-96 border p-1 rounded-md" type="date" [value]="data.payload.date" />
+        <input formControlName="date" class="md:w-96 border p-1 rounded-md" type="date" />
+        @if(triedToSubmit) {
+        <span class="text-red-600 block text-xs">{{ getErrorMessage('date') }}</span>
+        }
+      </label>
+    </div>
+
+    <div>
+      <label>
+        <span class="block text-sm mb-1"> Time: </span>
+        <input formControlName="time"  class="md:w-96 border p-1 rounded-md" type="time" />
         @if(triedToSubmit) {
         <span class="text-red-600 block text-xs">{{ getErrorMessage('date') }}</span>
         }

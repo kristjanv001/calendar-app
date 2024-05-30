@@ -4,7 +4,7 @@ export interface CalendarEvents {
 
 export interface CalendarEvent {
   id: string;
-  date: Date;
+  time: string;
   title: string
   description: string
 }

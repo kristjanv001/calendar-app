@@ -10,11 +10,12 @@ import { EventComposerComponent } from "../event-composer/event-composer.compone
 import { CalendarService } from "../../services/calendar.service";
 import { formatDateAsIso } from "../../utils/utils";
 import { EventListComponent } from "../event-list/event-list.component";
+import { SvgIconDirective } from "../../directives/svg-icon.directive";
 
 @Component({
   selector: "app-calendar",
   standalone: true,
-  imports: [CommonModule, CdkDropList, CdkDrag, EventListComponent],
+  imports: [CommonModule, CdkDropList, CdkDrag, EventListComponent, SvgIconDirective],
   templateUrl: "./calendar.component.html",
 })
 export class CalendarComponent {
@@ -109,7 +110,7 @@ export class CalendarComponent {
     return new Date(dropListId.substring(9));
   }
 
-  openDialog() {
+  openCreateEventDialog() {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: "Create a New Event",
@@ -120,13 +121,15 @@ export class CalendarComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        const { title, description, date, time } = result;
         const newEvent: CalendarEvent = {
-          ...result,
           id: nanoid(),
-          date: new Date(result.date)
+          title,
+          description,
+          time,
         };
 
-        this.calendarService.addNewEvent(new Date(result.date), newEvent);
+        this.calendarService.addNewEvent(new Date(date), newEvent);
       }
     });
   }

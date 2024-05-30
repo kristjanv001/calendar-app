@@ -1,32 +1,31 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, map } from "rxjs";
 import { formatDateAsIso } from "../utils/utils";
 import { CalendarEvent, CalendarEvents } from "../interfaces/calendar.interface";
 import { nanoid } from "nanoid";
 
-const initialEvents = {
+const initialEvents: CalendarEvents = {
   "2024-05-16": [
-    { id: nanoid(), date: new Date("2024-05-16"), title: "task1", description: "Description for task1" },
-    { id: nanoid(), date: new Date("2024-05-16"), title: "task2", description: "Description for task2" },
-    { id: nanoid(), date: new Date("2024-05-16"), title: "task3", description: "Description for task3" },
+    {
+      id: nanoid(),
+      time: "07:45",
+      title: "Event 1",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    },
+    {
+      id: nanoid(),
+      time: "13:25",
+      title: "Event 2",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    },
   ],
-  "2024-05-25": [
-    { id: nanoid(), date: new Date("2024-05-25"), title: "task4", description: "Description for task4" },
-    { id: nanoid(), date: new Date("2024-05-25"), title: "task5", description: "Description for task5" },
-  ],
-  "2024-05-27": [
-    { id: nanoid(), date: new Date("2024-05-27"), title: "task6", description: "Description for task6" },
-    { id: nanoid(), date: new Date("2024-05-27"), title: "task7", description: "Description for task7" },
-  ],
-  "2024-05-29": [
-    { id: nanoid(), date: new Date("2024-05-29"), title: "task8", description: "Description for task8" },
-    { id: nanoid(), date: new Date("2024-05-29"), title: "task9", description: "Description for task9" },
-    { id: nanoid(), date: new Date("2024-05-29"), title: "task10", description: "Description for task10" },
-  ],
-  "2024-06-01": [
-    { id: nanoid(), date: new Date("2024-06-01"), title: "tyjt", description: "Description for tyjt" },
-    { id: nanoid(), date: new Date("2024-06-01"), title: "axsfre", description: "Description for axsfre" },
-    { id: nanoid(), date: new Date("2024-06-01"), title: "rbhtr", description: "Description for rbhtr" },
+  "2024-05-30": [
+    {
+      id: nanoid(),
+      time: "09:30",
+      title: "Event 3",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    },
   ],
 };
 
@@ -38,7 +37,11 @@ export class CalendarService {
   events$: BehaviorSubject<CalendarEvents> = new BehaviorSubject<CalendarEvents>(initialEvents);
   pickedDay$ = new BehaviorSubject(new Date());
 
-  constructor() {}
+  constructor() {
+    // this.events$.subscribe((events) => {
+    //   console.log(events);
+    // });
+  }
 
   setSelectedMonth(date: Date) {
     this.selectedMonth$.next(date);
@@ -61,12 +64,12 @@ export class CalendarService {
     });
   }
 
-  removeEvent(date: Date, event: CalendarEvent) {
+  removeEvent(date: Date, eventToRemove: CalendarEvent) {
     // console.log("removing: ", date, event);
     const dateStr = formatDateAsIso(date);
     const prevState = this.events$.getValue();
     const dayEvents = prevState[dateStr] || [];
-    const updatedEventList = dayEvents.filter((e) => e.id !== event.id);
+    const updatedEventList = dayEvents.filter((dayEvent) => dayEvent.id !== eventToRemove.id);
 
     this.events$.next({
       ...prevState,
@@ -74,37 +77,38 @@ export class CalendarService {
     });
   }
 
-  updateEvent(date: Date, event: CalendarEvent) {
-    const dateStr = formatDateAsIso(date);
-    const prevState = this.events$.getValue();
-    const dayEvents = prevState[dateStr] || [];
-
-    const originalDate = formatDateAsIso(date);
-    const newDate = formatDateAsIso(event.date);
-
-    if (newDate !== originalDate) {
-      this.moveEvent(date, new Date(newDate), event);
+  updateEvent(oldDate: Date, newDate: Date, event: CalendarEvent) {
+    if (formatDateAsIso(oldDate) !== formatDateAsIso(newDate)) {
+      this.moveEvent(oldDate, newDate, event);
     } else {
-      const updatedEventList = dayEvents.map((e) => {
-        if (e.id === event.id) {
-          return {
-            ...event,
-            id: e.id,
-          };
-        } else {
-          return e;
-        }
-      });
+      this.moveEvent(oldDate, oldDate, event);
+      // const dateStr = formatDateAsIso(date);
+      // const prevState = this.events$.getValue();
+      // const dayEvents = prevState[dateStr] || [];
 
-      this.events$.next({
-        ...prevState,
-        [dateStr]: updatedEventList,
-      });
+      // const updatedEventList = dayEvents.map((e) => {
+      //   if (e.id === event.id) {
+      //     return {
+      //       ...event,
+      //       id: e.id,
+      //     };
+      //   } else {
+      //     return e;
+      //   }
+      // });
+
+      // this.events$.next({
+      //   ...prevState,
+      //   [dateStr]: updatedEventList,
+      // });
     }
   }
 
-  moveEvent(previousDate: Date, newDate: Date, event: CalendarEvent) {
-    this.removeEvent(previousDate, event);
+  moveEvent(oldDate: Date, newDate: Date, event: CalendarEvent) {
+    this.removeEvent(oldDate, event);
     this.addNewEvent(newDate, event);
+
+    // console.log("prev date events: ", this.events$.getValue()[formatDateAsIso(previousDate)]);
+    // console.log("new date events", this.events$.getValue()[formatDateAsIso(newDate)]);
   }
 }

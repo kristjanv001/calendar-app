@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { formatDateAsIso, formatTime } from "../../utils/utils";
 
 @Component({
   selector: "app-event-composer",
@@ -14,17 +15,25 @@ export class EventComposerComponent {
 
   constructor(
     private dialogRef: MatDialogRef<EventComposerComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: { payload: any },
   ) {}
 
+  ngOnInit() {
+    const calendarEvent = this.data.payload.calendarEvent;
+
+    if (calendarEvent) {
+      this.eventForm.patchValue({
+        ...calendarEvent,
+        time: calendarEvent.time,
+      });
+    }
+  }
+
   eventForm = new FormGroup({
-    title: new FormControl(this.data.payload.calendarEvent?.title ?? "", [
-      Validators.required,
-      Validators.minLength(1),
-      Validators.maxLength(50),
-    ]),
-    description: new FormControl(this.data.payload.calendarEvent?.description ?? "", [Validators.maxLength(50000)]),
+    title: new FormControl("", [Validators.required, Validators.minLength(1), Validators.maxLength(50)]),
+    description: new FormControl("", [Validators.maxLength(50000)]),
     date: new FormControl(this.data.payload.date, Validators.required),
+    time: new FormControl("09:00", Validators.required),
   });
 
   onSubmit() {
