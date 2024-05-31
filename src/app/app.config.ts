@@ -1,8 +1,11 @@
 import { ApplicationConfig } from "@angular/core";
-import { provideRouter, withEnabledBlockingInitialNavigation } from "@angular/router";
+import { provideRouter, withEnabledBlockingInitialNavigation, withViewTransitions } from "@angular/router";
 import { routes } from "./app.routes";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes, withEnabledBlockingInitialNavigation()), provideAnimationsAsync()],
+  providers: [
+    provideRouter(routes, withViewTransitions(), withEnabledBlockingInitialNavigation()),
+    provideAnimationsAsync(),
+  ],
 };
