@@ -212,6 +212,11 @@ export class CalendarComponent {
     );
   }
 
+  isWeekend(date: Date): boolean {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+
   formatDateAsIso(date: Date): string {
     return formatDateAsIso(date);
   }
@@ -222,4 +227,6 @@ export class CalendarComponent {
     }
     return str;
   }
+
+
 }

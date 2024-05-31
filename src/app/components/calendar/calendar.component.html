@@ -24,7 +24,7 @@
     <!-- grid -->
     <div class="grid grid-cols-7 gap-1 md:row-start-2 md:col-span-3">
       @for (day of weekDays; track $index) {
-      <span class="">{{ day }}</span>
+      <span [ngClass]="{'text-gray-400': day === 'Sat' || day === 'Sun'}">{{ day }}</span>
       } @for (_ of [].constructor( selectedMonthOffset$ | async ); track $index) {
       <div class="square min-h-8 sm:h-auto p-1"></div>
       }
@@ -32,14 +32,20 @@
       <button
         *ngFor="let calDay of (calendarMonth$ | async)?.days; let i = index"
         (click)="handleDayClick(calDay.date)"
-        class="square min-h-8 sm:h-auto bg-gray-100 relative border p-1 flex flex-col"
-        [ngClass]="{'bg-yellow-50': isSameDate(calDay.date, pickedDay$.getValue())}"
+        class="square min-h-8 sm:h-auto relative border p-1 flex flex-col"
+        [ngClass]="{
+          'bg-yellow-50': isSameDate(calDay.date, pickedDay$.getValue()),
+          'bg-gray-100': isWeekend(calDay.date)
+        }"
       >
         <!-- date's header -->
         <div class="w-full flex justify-end mb-1">
           <div
             class="bg-gray-100 rounded-md md:px-1 text-xs xl:text-base"
-            [ngClass]="{'bg-purple-500 text-white': isSameDate(calDay.date, currentDate)}"
+            [ngClass]="{
+              'bg-purple-500 text-white': isSameDate(calDay.date, currentDate),
+              'text-gray-400': isWeekend(calDay.date)
+            }"
           >
             {{calDay.day}}
           </div>
