@@ -9,6 +9,7 @@ import { CalendarEvent } from "../../interfaces/calendar.interface";
 import { EventComposerComponent } from "../event-composer/event-composer.component";
 import { formatDateAsIso } from "../../utils/utils";
 import { SvgIconDirective } from "../../directives/svg-icon.directive";
+import { NotificationService } from "../../services/notification.service";
 
 @Component({
   selector: "app-event-list",
@@ -19,9 +20,12 @@ import { SvgIconDirective } from "../../directives/svg-icon.directive";
 export class EventListComponent {
   calendarService = inject(CalendarService);
   @Input() events: CalendarEvent[] | null = [];
-  pickedDay$ = this.calendarService.pickedDay$; //⚠️ remove?
+  pickedDay$ = this.calendarService.pickedDay$;
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    public dialog: MatDialog,
+    private notificationService: NotificationService,
+  ) {}
 
   openRemoveConfirmDialog(eventToRemove: CalendarEvent) {
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -37,6 +41,7 @@ export class EventListComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.calendarService.removeEvent(this.pickedDay$.getValue(), eventToRemove);
+        this.notificationService.showSuccess("Event removed successfully!");
       }
     });
   }
@@ -65,6 +70,7 @@ export class EventListComponent {
         const newDate = new Date(result.date);
 
         this.calendarService.updateEvent(oldDate, newDate, updatedEvent);
+        this.notificationService.showSuccess("Event updated successfully!");
       }
     });
   }

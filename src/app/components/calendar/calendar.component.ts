@@ -11,6 +11,7 @@ import { CalendarService } from "../../services/calendar.service";
 import { formatDateAsIso } from "../../utils/utils";
 import { EventListComponent } from "../event-list/event-list.component";
 import { SvgIconDirective } from "../../directives/svg-icon.directive";
+import { NotificationService } from "../../services/notification.service";
 
 @Component({
   selector: "app-calendar",
@@ -38,7 +39,10 @@ export class CalendarComponent {
     }),
   );
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    public dialog: MatDialog,
+    private notificationService: NotificationService,
+  ) {}
 
   getEventsForDay(date: Date): Observable<CalendarEvent[]> {
     return this.events$.pipe(
@@ -115,7 +119,7 @@ export class CalendarComponent {
 
   openCreateEventDialog() {
     const dialogRef = this.dialog.open(DialogComponent, {
-      panelClass: 'my-outlined-dialog',
+      panelClass: "my-outlined-dialog",
       data: {
         title: "Create a New Event",
         component: EventComposerComponent,
@@ -134,6 +138,7 @@ export class CalendarComponent {
         };
 
         this.calendarService.addNewEvent(new Date(date), newEvent);
+        this.notificationService.showSuccess("Event added successfully!");
       }
     });
   }
