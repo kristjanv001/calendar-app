@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, map } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { formatDateAsIso } from "../utils/utils";
 import { CalendarEvent, CalendarEvents } from "../interfaces/calendar.interface";
 import { nanoid } from "nanoid";
+import { NotificationService } from "./notification.service";
 
 @Injectable({
   providedIn: "root",
@@ -12,7 +13,7 @@ export class CalendarService {
   events$: BehaviorSubject<CalendarEvents> = new BehaviorSubject<CalendarEvents>(this.genMockEvents());
   pickedDay$ = new BehaviorSubject(new Date());
 
-  constructor() {}
+  constructor(private notificationService: NotificationService) {}
 
   setSelectedMonth(date: Date) {
     this.selectedMonth$.next(date);
@@ -33,6 +34,8 @@ export class CalendarService {
       ...prevState,
       [dateStr]: updatedEventList,
     });
+
+    this.notificationService.showSuccess("Event added successfully!");
   }
 
   removeEvent(date: Date, eventToRemove: CalendarEvent) {
@@ -46,6 +49,8 @@ export class CalendarService {
       ...prevState,
       [dateStr]: updatedEventList,
     });
+
+    this.notificationService.showSuccess("Event removed successfully!");
   }
 
   updateEvent(oldDate: Date, newDate: Date, event: CalendarEvent) {
@@ -54,6 +59,8 @@ export class CalendarService {
     } else {
       this.moveEvent(oldDate, oldDate, event);
     }
+
+    this.notificationService.showSuccess("Event updated successfully!");
   }
 
   moveEvent(oldDate: Date, newDate: Date, event: CalendarEvent) {

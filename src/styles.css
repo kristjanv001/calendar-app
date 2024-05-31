@@ -24,6 +24,13 @@
   transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-  /* transition: transform 150ms cubic-bezier(0, 0, 0.2, 1); */
+/* .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
+} */
+
+.success {
+  --mdc-snackbar-container-color: #10b981;
+  --mat-mdc-snack-bar-button-color: white;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-snack-bar-button-color: white;
 }

@@ -104,8 +104,6 @@ export class CalendarComponent {
       if (prevContainerDate && newContainerDate) {
         this.calendarService.moveEvent(prevContainerDate, newContainerDate, movingItem);
       }
-
-      // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     } else {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     }
@@ -117,6 +115,7 @@ export class CalendarComponent {
 
   openCreateEventDialog() {
     const dialogRef = this.dialog.open(DialogComponent, {
+      panelClass: 'my-outlined-dialog',
       data: {
         title: "Create a New Event",
         component: EventComposerComponent,
@@ -227,6 +226,4 @@ export class CalendarComponent {
     }
     return str;
   }
-
-
 }
