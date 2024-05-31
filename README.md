@@ -2,7 +2,7 @@
 
 A calendar/scheduling app.
 
-![](https://res.cloudinary.com/du1qfmeoz/image/upload/v1717075862/Various/screely-1717075800641_tlgkzs.png)
+![](https://res.cloudinary.com/du1qfmeoz/image/upload/v1717150441/Various/screely-1717150389993_ct3zpg.png)
 
 ## 📋 Description
 
