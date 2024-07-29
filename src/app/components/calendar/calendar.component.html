@@ -35,7 +35,6 @@
         class="square min-h-8 sm:h-auto relative border p-1 flex flex-col"
         [ngClass]="{
           'bg-yellow-50': isSameDate(calDay.date, pickedDay$.getValue()),
-          'bg-gray-100': isWeekend(calDay.date)
         }"
       >
         <!-- date's header -->
@@ -44,7 +43,6 @@
             class="bg-gray-100 rounded-md md:px-1 text-xs xl:text-base"
             [ngClass]="{
               'bg-purple-500 text-white': isSameDate(calDay.date, currentDate),
-              'text-gray-400': isWeekend(calDay.date)
             }"
           >
             {{calDay.day}}
